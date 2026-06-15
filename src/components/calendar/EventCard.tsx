@@ -15,7 +15,7 @@ export function EventCard({ event, onClick, compact }: Props) {
     <div
       onClick={onClick}
       style={{
-        background: cl.bg, borderRadius: 10, padding: compact ? '5px 8px' : '8px 10px',
+        background: cl.bg, borderRadius: 6, padding: compact ? '5px 8px' : '8px 10px',
         cursor: 'pointer', borderLeft: `3px solid ${cl.dot}`, marginBottom: 4,
         transition: 'box-shadow 0.15s',
       }}

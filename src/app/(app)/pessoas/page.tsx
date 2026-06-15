@@ -53,12 +53,12 @@ export default function PessoasPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Buscar membro..."
-              style={{ width: '100%', height: 40, padding: '0 12px 0 34px', borderRadius: 10, border: '1px solid #D1D5DB', fontSize: 14, outline: 'none', background: '#fff' }}
+              style={{ width: '100%', height: 40, padding: '0 12px 0 34px', borderRadius: 6, border: '1px solid #D1D5DB', fontSize: 14, fontWeight: 400, outline: 'none', background: '#fff' }}
             />
           </div>
           <div style={{ display: 'flex', gap: 4 }}>
             {(['todos', 'ativo', 'inativo'] as const).map(f => (
-              <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 14px', borderRadius: 999, border: '1px solid', borderColor: filter === f ? '#2E5AAC' : '#E5E7EB', background: filter === f ? '#E6F1FB' : '#fff', color: filter === f ? '#2E5AAC' : '#6B7280', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+              <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 14px', borderRadius: 4, border: '1px solid', borderColor: filter === f ? '#2E5AAC' : '#E5E7EB', background: filter === f ? '#E6F1FB' : '#fff', color: filter === f ? '#2E5AAC' : '#6B7280', cursor: 'pointer', fontSize: 13, fontWeight: 400 }}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -66,7 +66,7 @@ export default function PessoasPage() {
         </div>
 
         {/* Table */}
-        <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid #E5E7EB', boxShadow: '0 1px 2px rgba(16,24,40,0.04)' }}>
+        <div style={{ background: '#fff', borderRadius: 6, overflow: 'hidden', border: '1px solid #E5E7EB', boxShadow: '0 1px 2px rgba(16,24,40,0.04)' }}>
           {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: '#6B7280', fontSize: 14 }}>Nenhum membro encontrado.</div>}
           {filtered.map((p, pi) => {
             const cl = getColor(COLORS[p.nome.charCodeAt(0) % 6]);
@@ -77,25 +77,25 @@ export default function PessoasPage() {
                 onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = '#FAFBFD'}
                 onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = ''}
               >
-                <div title={p.nome} style={{ width: 38, height: 38, borderRadius: '50%', background: cl.bg, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: cl.text, flexShrink: 0 }}>
+                <div title={p.nome} style={{ width: 38, height: 38, borderRadius: '50%', background: cl.bg, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 600, color: cl.text, flexShrink: 0 }}>
                   {initials(p.nome)}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 3 }}>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: '#101828' }}>{p.nome}</span>
-                    {!p.ativo && <span style={{ fontSize: 11, fontWeight: 600, color: '#993C1D', background: '#FAECE7', padding: '1px 7px', borderRadius: 999 }}>Inativo</span>}
+                    <span style={{ fontSize: 15, fontWeight: 500, color: '#101828' }}>{p.nome}</span>
+                    {!p.ativo && <span style={{ fontSize: 11, fontWeight: 400, color: '#993C1D', background: '#FAECE7', padding: '1px 7px', borderRadius: 4 }}>Inativo</span>}
                   </div>
-                  <div style={{ fontSize: 12, color: '#9AA3B5', marginBottom: 4 }}>{p.email}</div>
+                  <div style={{ fontSize: 12, fontWeight: 400, color: '#9AA3B5', marginBottom: 4 }}>{p.email}</div>
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                     {p.funcoes.map(fn => (
-                      <span key={fn} style={{ fontSize: 11, fontWeight: 500, color: '#534AB7', background: '#EEEDFE', padding: '2px 8px', borderRadius: 999 }}>{fn}</span>
+                      <span key={fn} style={{ fontSize: 11, fontWeight: 400, color: '#534AB7', background: '#EEEDFE', padding: '2px 8px', borderRadius: 4 }}>{fn}</span>
                     ))}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                  <button onClick={() => openEdit(p)} style={{ padding: '5px 12px', background: '#F7F9FC', border: '1px solid #E5E7EB', color: '#374151', fontSize: 12, borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Editar</button>
+                  <button onClick={() => openEdit(p)} style={{ padding: '5px 12px', background: '#F7F9FC', border: '1px solid #E5E7EB', color: '#374151', fontSize: 12, borderRadius: 6, cursor: 'pointer', fontWeight: 400 }}>Editar</button>
                   {p.ativo && (
-                    <button onClick={() => deactivatePerson.mutate(p.id)} style={{ padding: '5px 12px', background: '#FAECE7', border: '1px solid #FAECE7', color: '#993C1D', fontSize: 12, borderRadius: 8, cursor: 'pointer', fontWeight: 500 }}>Desativar</button>
+                    <button onClick={() => deactivatePerson.mutate(p.id)} style={{ padding: '5px 12px', background: '#FAECE7', border: '1px solid #FAECE7', color: '#993C1D', fontSize: 12, borderRadius: 6, cursor: 'pointer', fontWeight: 400 }}>Desativar</button>
                   )}
                 </div>
               </div>

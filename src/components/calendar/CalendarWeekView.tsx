@@ -35,14 +35,14 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
   const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
 
   return (
-    <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
       {/* Day headers */}
       <div style={{ display: 'grid', gridTemplateColumns: '52px repeat(7, 1fr)', borderBottom: '1px solid #E5E7EB', background: '#F7F9FC' }}>
         <div style={{ padding: '12px 8px' }} />
         {days.map(day => (
           <div key={day.ds} style={{ padding: '12px 8px', textAlign: 'center', borderLeft: '1px solid #E5E7EB' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{day.name}</div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 8, fontSize: 18, fontWeight: day.isToday ? 800 : 600, background: day.isToday ? '#1B2230' : 'transparent', color: day.isToday ? '#fff' : '#101828' }}>
+            <div style={{ fontSize: 9, fontWeight: 500, color: day.isToday ? '#2E5AAC' : '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{day.name}</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 30, height: 30, borderRadius: '50%', fontSize: 15, fontWeight: day.isToday ? 600 : 400, background: day.isToday ? '#2E5AAC' : 'transparent', color: day.isToday ? '#fff' : '#374151' }}>
               {day.num}
             </div>
           </div>
@@ -73,10 +73,10 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
                 <div
                   key={ev.id}
                   onClick={() => onEventClick(ev.id)}
-                  style={{ position: 'absolute', top: evTop(ev.hora), left: 4, right: 4, minHeight: 52, background: cl.bg, borderRadius: 10, padding: '7px 10px', cursor: 'pointer', borderLeft: `3px solid ${cl.dot}`, boxShadow: '0 2px 6px rgba(16,24,40,0.08)', zIndex: 1 }}
+                  style={{ position: 'absolute', top: evTop(ev.hora), left: 4, right: 4, minHeight: 52, background: cl.bg, borderRadius: 6, padding: '7px 10px', cursor: 'pointer', borderLeft: `3px solid ${cl.dot}`, boxShadow: '0 1px 4px rgba(16,24,40,0.06)', zIndex: 1 }}
                 >
-                  <div style={{ fontSize: 12, fontWeight: 700, color: cl.text, lineHeight: '1.3' }}>{icon} {ev.nome}</div>
-                  <div style={{ fontSize: 11, color: cl.text, opacity: 0.8, marginTop: 2 }}>{ev.hora}</div>
+                  <div style={{ fontSize: 12, fontWeight: 500, color: cl.text, lineHeight: '1.3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{icon} {ev.nome}</div>
+                  <div style={{ fontSize: 10, color: cl.dot, marginTop: 2 }}>{ev.hora}</div>
                   {ev.adoracao?.responsavel && <div style={{ fontSize: 11, color: cl.text, opacity: 0.7, marginTop: 2 }}>🎵 {ev.adoracao.responsavel.split(' ')[0]}</div>}
                   {ev.equipe?.length ? <div style={{ fontSize: 11, color: cl.text, opacity: 0.7, marginTop: 2 }}>👥 {ev.equipe[0].split(' ')[0]}{ev.equipe.length > 1 ? `+${ev.equipe.length - 1}` : ''}</div> : null}
                 </div>

@@ -67,8 +67,9 @@ export function Header({ onAddEvent, onAddPerson, onAddTeam }: HeaderProps) {
       key={v}
       onClick={() => setParam('view', v)}
       style={{
-        padding: '5px 14px', borderRadius: 999, border: 'none', cursor: 'pointer',
-        fontSize: 13, fontWeight: 600, background: viewParam === v ? '#fff' : 'transparent',
+        padding: '5px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
+        fontSize: 13, fontWeight: viewParam === v ? 500 : 400,
+        background: viewParam === v ? '#fff' : 'transparent',
         color: viewParam === v ? '#101828' : '#6B7280',
         boxShadow: viewParam === v ? '0 1px 3px rgba(16,24,40,0.10)' : 'none',
         transition: 'all 0.15s',
@@ -82,13 +83,13 @@ export function Header({ onAddEvent, onAddPerson, onAddTeam }: HeaderProps) {
       height: 60, display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
       boxShadow: '0 1px 2px rgba(16,24,40,0.04)',
     }}>
-      <div style={{ fontSize: 22, fontWeight: 800, color: '#101828', letterSpacing: '-0.02em', flexShrink: 0, whiteSpace: 'nowrap' }}>
+      <div style={{ fontSize: 22, fontWeight: 600, color: '#101828', letterSpacing: '-0.01em', flexShrink: 0, whiteSpace: 'nowrap' }}>
         {titles[page] ?? page}
       </div>
       <div style={{ flex: 1 }} />
 
       {page === 'calendario' && (
-        <div style={{ display: 'flex', background: '#EEF1F6', borderRadius: 999, padding: 3, gap: 1 }}>
+        <div style={{ display: 'flex', background: '#EEF1F6', borderRadius: 6, padding: 3, gap: 1 }}>
           {viewBtn('mes', 'Mês')}{viewBtn('semana', 'Semana')}{viewBtn('dia', 'Dia')}
         </div>
       )}
@@ -96,25 +97,25 @@ export function Header({ onAddEvent, onAddPerson, onAddTeam }: HeaderProps) {
       {page === 'calendario' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <button onClick={() => navDate(-1)} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-          <button onClick={() => setParam('date', fd(new Date(2026, 5, 15)))} style={{ padding: '5px 12px', borderRadius: 999, border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 13, fontWeight: 600 }}>Hoje</button>
+          <button onClick={() => setParam('date', fd(new Date(2026, 5, 15)))} style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 13, fontWeight: 400 }}>Hoje</button>
           <button onClick={() => navDate(1)} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
         </div>
       )}
 
       {page === 'calendario' && (
-        <button onClick={onAddEvent} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 10, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+        <button onClick={onAddEvent} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}>
           <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Adicionar
         </button>
       )}
 
       {page === 'pessoas' && (
-        <button onClick={onAddPerson} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 10, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+        <button onClick={onAddPerson} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}>
           <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Membro
         </button>
       )}
 
       {page === 'organizacao' && (
-        <button onClick={onAddTeam} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 10, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+        <button onClick={onAddTeam} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}>
           <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Equipe
         </button>
       )}

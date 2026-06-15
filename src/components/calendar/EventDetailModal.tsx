@@ -23,7 +23,7 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
   const Tags = ({ items }: { items: string[] }) => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
       {items.map((m, i) => (
-        <span key={i} style={{ fontSize: 12, fontWeight: 500, color: cl.text, background: cl.bg, padding: '2px 9px', borderRadius: 999 }}>{m}</span>
+        <span key={i} style={{ fontSize: 12, fontWeight: 400, color: cl.text, background: cl.bg, padding: '2px 8px', borderRadius: 4 }}>{m}</span>
       ))}
     </div>
   );
@@ -32,7 +32,7 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
     <div style={{ display: 'flex', gap: 10, padding: '10px 0', borderBottom: '1px solid #F3F4F6' }}>
       <span style={{ fontSize: 16, width: 20, flexShrink: 0, marginTop: 2 }}>{ic}</span>
       <div style={{ flex: 1 }}>
-        {label && <div style={{ fontSize: 11, fontWeight: 700, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{label}</div>}
+        {label && <div style={{ fontSize: 11, fontWeight: 500, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{label}</div>}
         {children}
       </div>
     </div>
@@ -45,20 +45,20 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 480, maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 16px 48px rgba(16,24,40,0.16)' }}
+        style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 480, maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 32px rgba(16,24,40,0.14)' }}
       >
         {/* Header */}
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: cl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>{icon}</div>
+        <div style={{ padding: '18px 22px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 38, height: 38, borderRadius: 8, background: cl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>{icon}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#101828' }}>{event.nome}</div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: cl.dot, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 }}>{lbl}</div>
+            <div style={{ fontSize: 17, fontWeight: 600, color: '#101828' }}>{event.nome}</div>
+            <div style={{ fontSize: 11, fontWeight: 500, color: cl.dot, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 }}>{lbl}</div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#9AA3B5', padding: 4, borderRadius: 8, lineHeight: 1 }}>×</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#9AA3B5', padding: 4, borderRadius: 4, lineHeight: 1 }}>×</button>
         </div>
 
         {/* Body */}
-        <div style={{ padding: '4px 24px', overflow: 'auto', flex: 1 }}>
+        <div style={{ padding: '4px 22px', overflow: 'auto', flex: 1 }}>
           {event.descricao && (
             <Row icon="📝">
               <span style={{ fontSize: 14, color: '#374151', lineHeight: '1.5' }}>{event.descricao}</span>
@@ -69,23 +69,23 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
           </Row>
           {event.pastor && (
             <Row icon="🙏" label="Pastor">
-              <span style={{ fontSize: 14, color: '#101828', fontWeight: 600 }}>{event.pastor}</span>
+              <span style={{ fontSize: 14, color: '#101828', fontWeight: 500 }}>{event.pastor}</span>
             </Row>
           )}
           {event.responsavel && (
             <Row icon="👤" label="Responsável">
-              <span style={{ fontSize: 14, color: '#101828', fontWeight: 600 }}>{event.responsavel}</span>
+              <span style={{ fontSize: 14, color: '#101828', fontWeight: 500 }}>{event.responsavel}</span>
             </Row>
           )}
           {event.adoracao && (event.adoracao.responsavel || event.adoracao.membros?.length > 0) && (
             <Row icon="🎵" label="Adoração">
-              {event.adoracao.responsavel && <div style={{ fontSize: 14, color: '#101828', fontWeight: 600 }}>{event.adoracao.responsavel}</div>}
+              {event.adoracao.responsavel && <div style={{ fontSize: 14, color: '#101828', fontWeight: 500 }}>{event.adoracao.responsavel}</div>}
               {event.adoracao.membros?.length > 0 && <Tags items={event.adoracao.membros} />}
             </Row>
           )}
           {event.organizacao && (event.organizacao.responsavel || event.organizacao.membros?.length > 0) && (
             <Row icon="📋" label="Organização">
-              {event.organizacao.responsavel && <div style={{ fontSize: 14, color: '#101828', fontWeight: 600 }}>{event.organizacao.responsavel}</div>}
+              {event.organizacao.responsavel && <div style={{ fontSize: 14, color: '#101828', fontWeight: 500 }}>{event.organizacao.responsavel}</div>}
               {event.organizacao.membros?.length > 0 && <Tags items={event.organizacao.membros} />}
             </Row>
           )}
@@ -102,9 +102,9 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '14px 24px', borderTop: '1px solid #E5E7EB', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button onClick={onDelete} style={{ padding: '8px 16px', background: '#FBEAF0', color: '#993556', border: 'none', fontSize: 13, fontWeight: 600, borderRadius: 10, cursor: 'pointer' }}>🗑️ Excluir</button>
-          <button onClick={onEdit} style={{ padding: '8px 20px', background: '#2E5AAC', color: '#fff', border: 'none', fontSize: 14, fontWeight: 600, borderRadius: 10, cursor: 'pointer' }}>✏️ Editar</button>
+        <div style={{ padding: '12px 22px', borderTop: '1px solid #E5E7EB', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+          <button onClick={onDelete} style={{ padding: '7px 14px', background: '#FBEAF0', color: '#993556', border: 'none', fontSize: 13, fontWeight: 400, borderRadius: 6, cursor: 'pointer' }}>🗑️ Excluir</button>
+          <button onClick={onEdit} style={{ padding: '7px 18px', background: '#2E5AAC', color: '#fff', border: 'none', fontSize: 13, fontWeight: 500, borderRadius: 6, cursor: 'pointer' }}>✏️ Editar</button>
         </div>
       </div>
     </div>
