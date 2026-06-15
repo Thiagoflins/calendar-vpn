@@ -1,28 +1,47 @@
-// HANDOFF: trocar corpo por Supabase, manter assinaturas.
 import { AuthUser } from '@/types';
-
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
-const MOCK_USER: AuthUser = {
-  id: 'u1',
-  email: 'roberto@vpn.com',
-  nome: 'Pr. Roberto Silva',
-  role: 'admin',
-};
+import { createClient } from '@/lib/supabase/client';
 
 export const authService = {
   async signIn(email: string, password: string): Promise<AuthUser> {
-    await sleep(500);
-    void email; void password;
-    return MOCK_USER;
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw new Error(error.message);
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('nome, role')
+      .eq('id', data.user.id)
+      .single();
+
+    return {
+      id: data.user.id,
+      email: data.user.email!,
+      nome: profile?.nome ?? undefined,
+      role: profile?.role ?? 'membro',
+    };
   },
 
   async signOut(): Promise<void> {
-    await sleep(200);
+    const supabase = createClient();
+    await supabase.auth.signOut();
   },
 
   async getCurrentUser(): Promise<AuthUser | null> {
-    await sleep(100);
-    return MOCK_USER;
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('nome, role')
+      .eq('id', user.id)
+      .single();
+
+    return {
+      id: user.id,
+      email: user.email!,
+      nome: profile?.nome ?? undefined,
+      role: profile?.role ?? 'membro',
+    };
   },
 };

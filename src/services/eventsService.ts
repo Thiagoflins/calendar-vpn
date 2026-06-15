@@ -1,59 +1,123 @@
-// HANDOFF: trocar corpo por Supabase, manter assinaturas.
 import { CalendarEvent, EventType } from '@/types';
-import { MOCK_EVENTS } from '@/lib/mock/events.mock';
+import { createClient } from '@/lib/supabase/client';
 
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-let store: CalendarEvent[] = [...MOCK_EVENTS];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toE(row: any): CalendarEvent {
+  return {
+    id: row.id,
+    type: row.type,
+    nome: row.nome,
+    descricao: row.descricao ?? undefined,
+    data: row.data,
+    hora: row.hora,
+    cor: row.cor,
+    observacao: row.observacao ?? undefined,
+    pastor: row.pastor ?? undefined,
+    responsavel: row.responsavel ?? undefined,
+    adoracao: row.adoracao ?? undefined,
+    organizacao: row.organizacao ?? undefined,
+    equipe: row.equipe ?? undefined,
+    repetir: row.repetir ?? undefined,
+    repetirQtd: row.repetir_qtd ?? undefined,
+    recorrenciaOrigem: row.recorrencia_origem ?? undefined,
+    criadoEm: row.criado_em ?? undefined,
+    atualizadoEm: row.atualizado_em ?? undefined,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toRow(e: Omit<CalendarEvent, 'id'>): Record<string, any> {
+  return {
+    type: e.type,
+    nome: e.nome,
+    descricao: e.descricao,
+    data: e.data,
+    hora: e.hora,
+    cor: e.cor,
+    observacao: e.observacao,
+    pastor: e.pastor,
+    responsavel: e.responsavel,
+    adoracao: e.adoracao,
+    organizacao: e.organizacao,
+    equipe: e.equipe,
+    repetir: e.repetir,
+    repetir_qtd: e.repetirQtd,
+    recorrencia_origem: e.recorrenciaOrigem,
+  };
+}
 
 export const eventsService = {
   async list(params?: { from?: string; to?: string; type?: EventType }): Promise<CalendarEvent[]> {
-    await sleep(300);
-    return store.filter(e => {
-      if (params?.from && e.data < params.from) return false;
-      if (params?.to && e.data > params.to) return false;
-      if (params?.type && e.type !== params.type) return false;
-      return true;
-    });
+    const supabase = createClient();
+    let q = supabase.from('events').select('*').order('data').order('hora');
+    if (params?.from) q = q.gte('data', params.from);
+    if (params?.to) q = q.lte('data', params.to);
+    if (params?.type) q = q.eq('type', params.type);
+    const { data, error } = await q;
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(toE);
   },
 
   async getById(id: string): Promise<CalendarEvent | null> {
-    await sleep(200);
-    return store.find(e => e.id === id) ?? null;
+    const supabase = createClient();
+    const { data, error } = await supabase.from('events').select('*').eq('id', id).single();
+    if (error) return null;
+    return toE(data);
   },
 
   async create(event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> {
-    await sleep(300);
-    const newEvent: CalendarEvent = { ...event, id: crypto.randomUUID(), criadoEm: new Date().toISOString() };
-    store = [...store, newEvent];
-    return newEvent;
+    const supabase = createClient();
+    const { data, error } = await supabase.from('events').insert(toRow(event)).select().single();
+    if (error) throw new Error(error.message);
+    return toE(data);
   },
 
   async createMany(events: Omit<CalendarEvent, 'id'>[]): Promise<CalendarEvent[]> {
-    await sleep(300);
-    const created = events.map(e => ({ ...e, id: crypto.randomUUID(), criadoEm: new Date().toISOString() } as CalendarEvent));
-    store = [...store, ...created];
-    return created;
+    const supabase = createClient();
+    const { data, error } = await supabase.from('events').insert(events.map(toRow)).select();
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(toE);
   },
 
   async update(id: string, patch: Partial<CalendarEvent>): Promise<CalendarEvent> {
-    await sleep(300);
-    const idx = store.findIndex(e => e.id === id);
-    if (idx === -1) throw new Error('Event not found');
-    store[idx] = { ...store[idx], ...patch, atualizadoEm: new Date().toISOString() };
-    return store[idx];
+    const supabase = createClient();
+    const { data, error } = await supabase.from('events').update({
+      ...(patch.type !== undefined && { type: patch.type }),
+      ...(patch.nome !== undefined && { nome: patch.nome }),
+      ...(patch.descricao !== undefined && { descricao: patch.descricao }),
+      ...(patch.data !== undefined && { data: patch.data }),
+      ...(patch.hora !== undefined && { hora: patch.hora }),
+      ...(patch.cor !== undefined && { cor: patch.cor }),
+      ...(patch.observacao !== undefined && { observacao: patch.observacao }),
+      ...(patch.pastor !== undefined && { pastor: patch.pastor }),
+      ...(patch.responsavel !== undefined && { responsavel: patch.responsavel }),
+      ...(patch.adoracao !== undefined && { adoracao: patch.adoracao }),
+      ...(patch.organizacao !== undefined && { organizacao: patch.organizacao }),
+      ...(patch.equipe !== undefined && { equipe: patch.equipe }),
+      ...(patch.repetir !== undefined && { repetir: patch.repetir }),
+      ...(patch.repetirQtd !== undefined && { repetir_qtd: patch.repetirQtd }),
+    }).eq('id', id).select().single();
+    if (error) throw new Error(error.message);
+    return toE(data);
   },
 
   async duplicate(id: string): Promise<CalendarEvent> {
-    await sleep(300);
-    const ev = store.find(e => e.id === id);
-    if (!ev) throw new Error('Event not found');
-    const dup: CalendarEvent = { ...ev, id: crypto.randomUUID(), nome: ev.nome + ' (cópia)', criadoEm: new Date().toISOString() };
-    store = [...store, dup];
-    return dup;
+    const supabase = createClient();
+    const { data: ev, error: fetchErr } = await supabase.from('events').select('*').eq('id', id).single();
+    if (fetchErr || !ev) throw new Error('Event not found');
+    const { id: _id, criado_em: _c, atualizado_em: _a, ...rest } = ev;
+    const { data, error } = await supabase.from('events').insert({
+      ...rest,
+      nome: ev.nome + ' (cópia)',
+      recorrencia_origem: id,
+    }).select().single();
+    if (error) throw new Error(error.message);
+    return toE(data);
   },
 
   async remove(id: string): Promise<void> {
-    await sleep(300);
-    store = store.filter(e => e.id !== id);
+    const supabase = createClient();
+    const { error } = await supabase.from('events').delete().eq('id', id);
+    if (error) throw new Error(error.message);
   },
 };

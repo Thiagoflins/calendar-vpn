@@ -1,45 +1,85 @@
-// HANDOFF: trocar corpo por Supabase, manter assinaturas.
 import { Person } from '@/types';
-import { MOCK_PEOPLE } from '@/lib/mock/people.mock';
+import { createClient } from '@/lib/supabase/client';
 
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-let store: Person[] = [...MOCK_PEOPLE];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toP(row: any, teamIds: string[]): Person {
+  return {
+    id: row.id,
+    nome: row.nome,
+    email: row.email ?? undefined,
+    telefone: row.telefone ?? undefined,
+    funcoes: row.funcoes ?? [],
+    equipeIds: teamIds,
+    ativo: row.ativo,
+    observacao: row.observacao ?? undefined,
+    criadoEm: row.criado_em ?? undefined,
+  };
+}
 
 export const peopleService = {
   async list(params?: { ativo?: boolean }): Promise<Person[]> {
-    await sleep(300);
-    if (params?.ativo !== undefined) return store.filter(p => p.ativo === params.ativo);
-    return [...store];
+    const supabase = createClient();
+    let q = supabase.from('people').select('*').order('nome');
+    if (params?.ativo !== undefined) q = q.eq('ativo', params.ativo);
+    const { data, error } = await q;
+    if (error) throw new Error(error.message);
+
+    const { data: members } = await supabase.from('team_members').select('team_id, person_id');
+
+    return (data ?? []).map(row => {
+      const teamIds = (members ?? [])
+        .filter((m: { person_id: string }) => m.person_id === row.id)
+        .map((m: { team_id: string }) => m.team_id);
+      return toP(row, teamIds);
+    });
   },
 
   async getById(id: string): Promise<Person | null> {
-    await sleep(200);
-    return store.find(p => p.id === id) ?? null;
+    const supabase = createClient();
+    const { data, error } = await supabase.from('people').select('*').eq('id', id).single();
+    if (error) return null;
+    const { data: members } = await supabase.from('team_members').select('team_id').eq('person_id', id);
+    return toP(data, (members ?? []).map((m: { team_id: string }) => m.team_id));
   },
 
   async create(p: Omit<Person, 'id'>): Promise<Person> {
-    await sleep(300);
-    const created: Person = { ...p, id: crypto.randomUUID(), criadoEm: new Date().toISOString() };
-    store = [...store, created];
-    return created;
+    const supabase = createClient();
+    const { data, error } = await supabase.from('people').insert({
+      nome: p.nome,
+      email: p.email,
+      telefone: p.telefone,
+      funcoes: p.funcoes,
+      ativo: p.ativo,
+      observacao: p.observacao,
+    }).select().single();
+    if (error) throw new Error(error.message);
+    return toP(data, []);
   },
 
   async update(id: string, patch: Partial<Person>): Promise<Person> {
-    await sleep(300);
-    const idx = store.findIndex(p => p.id === id);
-    if (idx === -1) throw new Error('Person not found');
-    store[idx] = { ...store[idx], ...patch };
-    return store[idx];
+    const supabase = createClient();
+    const { data, error } = await supabase.from('people').update({
+      ...(patch.nome !== undefined && { nome: patch.nome }),
+      ...(patch.email !== undefined && { email: patch.email }),
+      ...(patch.telefone !== undefined && { telefone: patch.telefone }),
+      ...(patch.funcoes !== undefined && { funcoes: patch.funcoes }),
+      ...(patch.ativo !== undefined && { ativo: patch.ativo }),
+      ...(patch.observacao !== undefined && { observacao: patch.observacao }),
+    }).eq('id', id).select().single();
+    if (error) throw new Error(error.message);
+    const { data: members } = await supabase.from('team_members').select('team_id').eq('person_id', id);
+    return toP(data, (members ?? []).map((m: { team_id: string }) => m.team_id));
   },
 
   async deactivate(id: string): Promise<void> {
-    await sleep(300);
-    const idx = store.findIndex(p => p.id === id);
-    if (idx !== -1) store[idx] = { ...store[idx], ativo: false };
+    const supabase = createClient();
+    const { error } = await supabase.from('people').update({ ativo: false }).eq('id', id);
+    if (error) throw new Error(error.message);
   },
 
   async remove(id: string): Promise<void> {
-    await sleep(300);
-    store = store.filter(p => p.id !== id);
+    const supabase = createClient();
+    const { error } = await supabase.from('people').delete().eq('id', id);
+    if (error) throw new Error(error.message);
   },
 };

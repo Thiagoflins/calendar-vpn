@@ -54,10 +54,10 @@ export function Sidebar() {
     <aside style={{ width: 272, background: '#1B2230', display: 'flex', flexDirection: 'column', flexShrink: 0, overflowY: 'auto', overflowX: 'hidden', height: '100vh' }}>
       {/* Logo */}
       <div onClick={() => router.push('/home')} style={{ padding: '16px 20px', borderBottom: '1px solid #2F3848', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
-        <Image src="/logo-azul.png" alt="Logo VPN" width={48} height={48} style={{ borderRadius: 8, flexShrink: 0 }} />
+        <Image src="/logo-azul.png" alt="Logo VPN" width={60} height={60} style={{ borderRadius: 8, flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: 11, fontWeight: 400, color: '#9AA3B5', lineHeight: '1.25' }}>Casa Apostólica</div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#E7EAF0', lineHeight: '1.25' }}>Voz para as Nações</div>
+          <div style={{ fontSize: 12, fontWeight: 400, color: '#9AA3B5', lineHeight: '1.25' }}>Casa Apostólica</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#E7EAF0', lineHeight: '1.25' }}>Voz para as Nações</div>
         </div>
       </div>
 
