@@ -21,6 +21,38 @@ export const authService = {
     };
   },
 
+  async signUp(email: string, password: string, nome: string): Promise<AuthUser> {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { nome } },
+    });
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Erro ao criar conta.');
+
+    return {
+      id: data.user.id,
+      email: data.user.email!,
+      nome,
+      role: 'membro',
+    };
+  },
+
+  async updateProfile(nome: string): Promise<void> {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Não autenticado.');
+    const { error } = await supabase.from('profiles').update({ nome }).eq('id', user.id);
+    if (error) throw new Error(error.message);
+  },
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw new Error(error.message);
+  },
+
   async signOut(): Promise<void> {
     const supabase = createClient();
     await supabase.auth.signOut();

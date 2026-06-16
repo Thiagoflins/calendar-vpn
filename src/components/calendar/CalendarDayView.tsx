@@ -51,7 +51,7 @@ export function CalendarDayView({ date, events, onEventClick }: Props) {
                 style={{ position: 'absolute', top: evTop(ev.hora), left: 8, right: 8, minHeight: 58, background: cl.bg, borderRadius: 12, padding: '10px 14px', cursor: 'pointer', borderLeft: `4px solid ${cl.dot}`, boxShadow: '0 2px 8px rgba(16,24,40,0.08)', zIndex: 1 }}
               >
                 <div style={{ fontSize: 14, fontWeight: 700, color: cl.text }}>{icon} {ev.nome}</div>
-                <div style={{ fontSize: 12, color: cl.text, opacity: 0.8, marginTop: 2 }}>{ev.hora}</div>
+                <div style={{ fontSize: 12, color: cl.text, opacity: 0.8, marginTop: 2 }}>{ev.hora.slice(0, 5)}</div>
                 {ev.pastor && <div style={{ fontSize: 12, color: cl.text, opacity: 0.7, marginTop: 4 }}>Pastor: {ev.pastor}</div>}
                 {ev.responsavel && <div style={{ fontSize: 12, color: cl.text, opacity: 0.7, marginTop: 4 }}>Resp.: {ev.responsavel}</div>}
               </div>

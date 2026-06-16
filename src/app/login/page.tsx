@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { authService } from '@/services/authService';
 
 export default function LoginPage() {
@@ -76,6 +77,13 @@ export default function LoginPage() {
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+
+        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: '#9AA3B5' }}>
+          Não tem conta?{' '}
+          <Link href="/cadastro" style={{ color: '#4A7BC8', fontWeight: 500, textDecoration: 'none' }}>
+            Criar conta
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -122,7 +122,7 @@ export function DashboardWeekCalendar({ date, events, onEventClick, onDayClick }
                   onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.filter = ''}
                 >
                   <div style={{ fontSize: 11, fontWeight: 500, color: cl.text, lineHeight: '1.3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.nome}</div>
-                  <div style={{ fontSize: 10, color: cl.dot, marginTop: 1 }}>{ev.hora}</div>
+                  <div style={{ fontSize: 10, color: cl.dot, marginTop: 1 }}>{ev.hora.slice(0, 5)}</div>
                 </div>
               );
             })}

@@ -3,7 +3,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useEvents } from '@/hooks/useEvents';
-import { getColor } from '@/lib/colors';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAY_INITIALS = ['S','T','Q','Q','S','S','D'];
@@ -47,41 +46,63 @@ export function Sidebar() {
   });
 
   const nextEv = events.filter(e => e.data >= todayStr).sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora))[0] ?? null;
-
   const activePath = '/' + pathname.split('/')[1];
 
   return (
-    <aside style={{ width: 272, background: '#1B2230', display: 'flex', flexDirection: 'column', flexShrink: 0, overflowY: 'auto', overflowX: 'hidden', height: '100vh' }}>
+    <aside style={{
+      width: 260, background: '#1B2230', display: 'flex', flexDirection: 'column',
+      flexShrink: 0, overflow: 'hidden', height: '100vh',
+    }}>
+
       {/* Logo */}
-      <div onClick={() => router.push('/home')} style={{ padding: '16px 20px', borderBottom: '1px solid #2F3848', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
-        <Image src="/logo-azul.png" alt="Logo VPN" width={60} height={60} style={{ borderRadius: 8, flexShrink: 0 }} />
+      <div
+        onClick={() => router.push('/home')}
+        style={{ padding: '12px 16px', borderBottom: '1px solid #2F3848', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', flexShrink: 0 }}
+      >
+        <Image src="/logo-azul.png" alt="Logo VPN" width={44} height={44} style={{ borderRadius: 8, flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: 12, fontWeight: 400, color: '#9AA3B5', lineHeight: '1.25' }}>Casa Apostólica</div>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#E7EAF0', lineHeight: '1.25' }}>Voz para as Nações</div>
+          <div style={{ fontSize: 11, fontWeight: 400, color: '#9AA3B5', lineHeight: 1.2 }}>Casa Apostólica</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#E7EAF0', lineHeight: 1.2 }}>Voz para as Nações</div>
         </div>
       </div>
 
       {/* Mini calendar */}
-      <div style={{ padding: '14px 16px', borderBottom: '1px solid #2F3848' }}>
-        <div style={{ background: '#242C3D', borderRadius: 10, padding: '12px 14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-            <button onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth()-1); return n; })} style={{ width: 22, height: 22, borderRadius: 5, border: 'none', background: 'transparent', color: '#9AA3B5', cursor: 'pointer', fontSize: 16 }}>‹</button>
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#E7EAF0' }}>{MONTHS[m].slice(0,3)} {y}</span>
-            <button onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth()+1); return n; })} style={{ width: 22, height: 22, borderRadius: 5, border: 'none', background: 'transparent', color: '#9AA3B5', cursor: 'pointer', fontSize: 16 }}>›</button>
+      <div style={{ padding: '10px 12px', borderBottom: '1px solid #2F3848', flexShrink: 0 }}>
+        <div style={{ background: '#242C3D', borderRadius: 8, padding: '8px 10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+            <button
+              onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n; })}
+              style={{ width: 20, height: 20, borderRadius: 4, border: 'none', background: 'transparent', color: '#9AA3B5', cursor: 'pointer', fontSize: 15, lineHeight: 1 }}
+            >‹</button>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#E7EAF0' }}>{MONTHS[m].slice(0, 3)} {y}</span>
+            <button
+              onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n; })}
+              style={{ width: 20, height: 20, borderRadius: 4, border: 'none', background: 'transparent', color: '#9AA3B5', cursor: 'pointer', fontSize: 15, lineHeight: 1 }}
+            >›</button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 3 }}>
-            {DAY_INITIALS.map((d, i) => <div key={i} style={{ textAlign: 'center', fontSize: 9, fontWeight: 500, color: '#4B5563' }}>{d}</div>)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 2 }}>
+            {DAY_INITIALS.map((d, i) => (
+              <div key={i} style={{ textAlign: 'center', fontSize: 9, fontWeight: 500, color: '#4B5563' }}>{d}</div>
+            ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
             {miniCells.map(cell => (
               <div
                 key={cell.ds}
                 onClick={() => router.push(`/calendario?date=${cell.ds}&view=dia`)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 22, cursor: 'pointer' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 19, cursor: 'pointer' }}
               >
-                <span style={{ fontSize: 10, fontWeight: cell.isT ? 700 : 400, color: cell.isT ? '#fff' : cell.inM ? '#C8CDD9' : '#3D4455', background: cell.isT ? '#2E5AAC' : 'transparent', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', position: 'relative' }}>
+                <span style={{
+                  fontSize: 9, fontWeight: cell.isT ? 700 : 400,
+                  color: cell.isT ? '#fff' : cell.inM ? '#C8CDD9' : '#3D4455',
+                  background: cell.isT ? '#2E5AAC' : 'transparent',
+                  width: 17, height: 17, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: '50%', position: 'relative',
+                }}>
                   {cell.day}
-                  {cell.hasEv && !cell.isT && <span style={{ position: 'absolute', bottom: 1, left: '50%', transform: 'translateX(-50%)', width: 3, height: 3, borderRadius: '50%', background: '#4A7BC8' }} />}
+                  {cell.hasEv && !cell.isT && (
+                    <span style={{ position: 'absolute', bottom: 1, left: '50%', transform: 'translateX(-50%)', width: 3, height: 3, borderRadius: '50%', background: '#4A7BC8' }} />
+                  )}
                 </span>
               </div>
             ))}
@@ -91,30 +112,30 @@ export function Sidebar() {
 
       {/* Next event */}
       {nextEv && (
-        <div style={{ padding: '10px 16px', borderBottom: '1px solid #2F3848' }}>
-          <div style={{ background: '#242C3D', borderRadius: 5, padding: '10px 12px' }}>
-            <div style={{ fontSize: 10, fontWeight: 500, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 }}>Próximo evento</div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: '#E7EAF0', marginBottom: 2 }}>{nextEv.nome}</div>
-            <div style={{ fontSize: 11, fontWeight: 400, color: '#9AA3B5' }}>{fmtDatePT(nextEv.data)} · {nextEv.hora}</div>
+        <div style={{ padding: '8px 12px', borderBottom: '1px solid #2F3848', flexShrink: 0 }}>
+          <div style={{ background: '#242C3D', borderRadius: 6, padding: '8px 10px' }}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Próximo evento</div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#E7EAF0', marginBottom: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nextEv.nome}</div>
+            <div style={{ fontSize: 10, color: '#9AA3B5' }}>{fmtDatePT(nextEv.data)} · {nextEv.hora.slice(0, 5)}</div>
           </div>
         </div>
       )}
 
       {/* Navigation */}
-      <nav style={{ padding: '10px', flex: 1 }}>
-        <div style={{ fontSize: 10, fontWeight: 500, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 8px', marginBottom: 4 }}>Menu</div>
+      <nav style={{ padding: '8px', flex: 1, overflowY: 'auto' }}>
+        <div style={{ fontSize: 9, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 8px', marginBottom: 3 }}>Menu</div>
         {NAV_ITEMS.map(item => item.soon ? (
-          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 5, color: '#3D4455', fontSize: 13, marginBottom: 1, cursor: 'default' }}>
-            <span style={{ fontSize: 15, width: 20, textAlign: 'center' }}>{item.icon}</span>
+          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', borderRadius: 5, color: '#3D4455', fontSize: 13, marginBottom: 1, cursor: 'default' }}>
+            <span style={{ fontSize: 14, width: 18, textAlign: 'center' }}>{item.icon}</span>
             <span>{item.label}</span>
-            <span style={{ marginLeft: 'auto', fontSize: 10, fontWeight: 600, background: '#1E293B', color: '#6B7280', padding: '1px 6px', borderRadius: 4 }}>em breve</span>
+            <span style={{ marginLeft: 'auto', fontSize: 9, fontWeight: 600, background: '#1E293B', color: '#6B7280', padding: '1px 6px', borderRadius: 4 }}>em breve</span>
           </div>
         ) : (
           <button
             key={item.id}
             onClick={() => router.push(item.path)}
             style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px',
+              width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px',
               borderRadius: 5, border: 'none', cursor: 'pointer',
               background: activePath === item.path ? '#2E5AAC' : 'transparent',
               color: activePath === item.path ? '#fff' : '#9AA3B5',
@@ -122,32 +143,23 @@ export function Sidebar() {
               textAlign: 'left', marginBottom: 1, transition: 'all 0.15s',
             }}
           >
-            <span style={{ fontSize: 15, width: 20, textAlign: 'center' }}>{item.icon}</span>
+            <span style={{ fontSize: 14, width: 18, textAlign: 'center' }}>{item.icon}</span>
             <span>{item.label}</span>
           </button>
         ))}
       </nav>
 
       {/* My Calendars */}
-      <div style={{ padding: '12px 18px 16px', borderTop: '1px solid #2F3848' }}>
-        <div style={{ fontSize: 10, fontWeight: 500, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Meus Calendários</div>
+      <div style={{ padding: '10px 16px 12px', borderTop: '1px solid #2F3848', flexShrink: 0 }}>
+        <div style={{ fontSize: 9, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Meus Calendários</div>
         {[{ l: 'Cultos', c: '#2E5AAC' }, { l: 'Atividades', c: '#1D9E75' }, { l: 'Especiais', c: '#7F77DD' }].map(item => (
-          <div key={item.l} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
-            <div style={{ width: 11, height: 11, borderRadius: 3, background: item.c }} />
-            <span style={{ fontSize: 12, color: '#9AA3B5' }}>{item.l}</span>
+          <div key={item.l} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+            <div style={{ width: 9, height: 9, borderRadius: 2, background: item.c, flexShrink: 0 }} />
+            <span style={{ fontSize: 11, color: '#9AA3B5' }}>{item.l}</span>
           </div>
         ))}
       </div>
 
-      {/* Profile — rodapé */}
-      <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #2F3848' }}>
-        <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#2E5AAC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#fff', flexShrink: 0 }}>RS</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500, color: '#E7EAF0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Pr. Roberto Silva</div>
-          <div style={{ fontSize: 11, fontWeight: 400, color: '#9AA3B5' }}>Administrador</div>
-        </div>
-        <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1D9E75', flexShrink: 0 }} />
-      </div>
     </aside>
   );
 }

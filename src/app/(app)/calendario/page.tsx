@@ -82,6 +82,12 @@ function CalendarioContent() {
     setEditEvent(null);
   };
 
+  const handleSaveCustom = async (events: Omit<CalendarEvent, 'id'>[]) => {
+    await createMany.mutateAsync(events);
+    setShowForm(false);
+    setEditEvent(null);
+  };
+
   const handleDelete = async (id: string) => {
     await removeEvent.mutateAsync(id);
     setDetailId(null);
@@ -125,6 +131,7 @@ function CalendarioContent() {
           defaultDate={defaultDate}
           onClose={() => { setShowForm(false); setEditEvent(null); }}
           onSave={handleSave}
+          onSaveCustom={handleSaveCustom}
           onDelete={handleDelete}
         />
       )}

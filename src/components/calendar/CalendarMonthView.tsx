@@ -57,7 +57,7 @@ export function CalendarMonthView({ date, events, onDayClick, onEventClick }: Pr
                 </span>
               </div>
               {cell.dayEvs.map(ev => (
-                <EventCard key={ev.id} event={ev} onClick={() => onEventClick(ev.id)} />
+                <EventCard key={ev.id} event={ev} onClick={e => { e.stopPropagation(); onEventClick(ev.id); }} />
               ))}
             </div>
           );

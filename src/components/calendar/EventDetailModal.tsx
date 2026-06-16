@@ -1,12 +1,23 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { CalendarEvent } from '@/types';
 import { getColor } from '@/lib/colors';
+import { createClient } from '@/lib/supabase/client';
 
 function fmtDatePT(ds: string) {
   if (!ds) return '';
   const [y, mo, d] = ds.split('-');
   return `${d}/${mo}/${y}`;
 }
+
+function fmtTs(ts: string): string {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+    + ', ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+type AuditEntry = { action: string; usuario_nome: string; criado_em: string };
 
 type Props = {
   event: CalendarEvent;
@@ -19,6 +30,20 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
   const cl = getColor(event.cor);
   const icon = event.type === 'culto' ? '⛪' : '📅';
   const lbl = event.type === 'culto' ? 'Culto' : 'Atividade';
+
+  const [audit, setAudit] = useState<AuditEntry[]>([]);
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from('event_audit_log')
+      .select('action, usuario_nome, criado_em')
+      .eq('event_id', event.id)
+      .order('criado_em', { ascending: true })
+      .then(({ data }) => setAudit(data ?? []));
+  }, [event.id]);
+
+  const auditCriado = audit.find(a => a.action === 'criado');
+  const auditAtualizado = [...audit].reverse().find(a => a.action === 'atualizado');
 
   const Tags = ({ items }: { items: string[] }) => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
@@ -64,17 +89,20 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
               <span style={{ fontSize: 14, color: '#374151', lineHeight: '1.5' }}>{event.descricao}</span>
             </Row>
           )}
-          <Row icon="📅">
-            <span style={{ fontSize: 14, color: '#101828' }}>{fmtDatePT(event.data)} · {event.hora}</span>
+          <Row icon="📅" label="Dia">
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{fmtDatePT(event.data)}</span>
+          </Row>
+          <Row icon="🕐" label="Horário">
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{event.hora.slice(0, 5)}</span>
           </Row>
           {event.pastor && (
             <Row icon="🙏" label="Pastor">
-              <span style={{ fontSize: 14, color: '#101828', fontWeight: 500 }}>{event.pastor}</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{event.pastor}</span>
             </Row>
           )}
           {event.responsavel && (
             <Row icon="👤" label="Responsável">
-              <span style={{ fontSize: 14, color: '#101828', fontWeight: 500 }}>{event.responsavel}</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{event.responsavel}</span>
             </Row>
           )}
           {event.adoracao && (event.adoracao.responsavel || event.adoracao.membros?.length > 0) && (
@@ -98,6 +126,29 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
             <Row icon="💬">
               <span style={{ fontSize: 14, color: '#374151', lineHeight: '1.5' }}>{event.observacao}</span>
             </Row>
+          )}
+
+          {/* Auditoria */}
+          {(auditCriado || auditAtualizado) && (
+            <div style={{ marginTop: 12, padding: '10px 12px', background: '#F7F9FC', borderRadius: 8 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Auditoria</div>
+              {auditCriado && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: auditAtualizado ? 6 : 0 }}>
+                  <span style={{ fontSize: 12 }}>🟢</span>
+                  <span style={{ fontSize: 12, color: '#374151' }}>
+                    Criado por <strong>{auditCriado.usuario_nome}</strong> · {fmtTs(auditCriado.criado_em)}
+                  </span>
+                </div>
+              )}
+              {auditAtualizado && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 12 }}>✏️</span>
+                  <span style={{ fontSize: 12, color: '#374151' }}>
+                    Última edição por <strong>{auditAtualizado.usuario_nome}</strong> · {fmtTs(auditAtualizado.criado_em)}
+                  </span>
+                </div>
+              )}
+            </div>
           )}
         </div>
 

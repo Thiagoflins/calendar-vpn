@@ -3,7 +3,7 @@ import { getColor } from '@/lib/colors';
 
 type Props = {
   event: CalendarEvent;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   compact?: boolean;
 };
 
@@ -20,19 +20,21 @@ export function EventCard({ event, onClick, compact }: Props) {
         transition: 'box-shadow 0.15s',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4, marginBottom: 2 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4, marginBottom: 4 }}>
         <span style={{ fontSize: 11, flexShrink: 0, marginTop: 1 }}>{icon}</span>
-        <span style={{ fontSize: 12, fontWeight: 600, color: cl.text, lineHeight: '1.3' }}>{event.nome}</span>
+        <span style={{ fontSize: 12, fontWeight: 700, color: cl.text, lineHeight: '1.3' }}>{event.nome}</span>
       </div>
-      <div style={{ fontSize: 11, color: cl.text, opacity: 0.8, fontWeight: 500 }}>{event.hora}</div>
+      <div style={{ fontSize: 11, color: cl.text, opacity: 0.8 }}>
+        <span style={{ fontWeight: 500 }}>Horário:</span> {event.hora.slice(0, 5)}
+      </div>
       {!compact && event.pastor && (
         <div style={{ fontSize: 11, color: cl.text, opacity: 0.7, marginTop: 2 }}>
-          Pr. {event.pastor.split(' ').slice(-1)[0]}
+          <span style={{ fontWeight: 500 }}>Pastor:</span> {event.pastor.split(' ')[0]}
         </div>
       )}
       {!compact && event.responsavel && (
         <div style={{ fontSize: 11, color: cl.text, opacity: 0.7, marginTop: 2 }}>
-          {event.responsavel.split(' ')[0]}
+          <span style={{ fontWeight: 500 }}>Responsável:</span> {event.responsavel.split(' ')[0]}
         </div>
       )}
       {!compact && event.adoracao?.responsavel && (

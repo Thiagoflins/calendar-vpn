@@ -67,20 +67,27 @@ export const eventsService = {
 
   async create(event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> {
     const supabase = createClient();
-    const { data, error } = await supabase.from('events').insert(toRow(event)).select().single();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user.id;
+    const { data, error } = await supabase.from('events').insert({ ...toRow(event), ...(userId && { criado_por: userId }) }).select().single();
     if (error) throw new Error(error.message);
     return toE(data);
   },
 
   async createMany(events: Omit<CalendarEvent, 'id'>[]): Promise<CalendarEvent[]> {
     const supabase = createClient();
-    const { data, error } = await supabase.from('events').insert(events.map(toRow)).select();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user.id;
+    const rows = events.map(e => ({ ...toRow(e), ...(userId && { criado_por: userId }) }));
+    const { data, error } = await supabase.from('events').insert(rows).select();
     if (error) throw new Error(error.message);
     return (data ?? []).map(toE);
   },
 
   async update(id: string, patch: Partial<CalendarEvent>): Promise<CalendarEvent> {
     const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user.id;
     const { data, error } = await supabase.from('events').update({
       ...(patch.type !== undefined && { type: patch.type }),
       ...(patch.nome !== undefined && { nome: patch.nome }),
@@ -96,6 +103,7 @@ export const eventsService = {
       ...(patch.equipe !== undefined && { equipe: patch.equipe }),
       ...(patch.repetir !== undefined && { repetir: patch.repetir }),
       ...(patch.repetirQtd !== undefined && { repetir_qtd: patch.repetirQtd }),
+      ...(userId && { atualizado_por: userId }),
     }).eq('id', id).select().single();
     if (error) throw new Error(error.message);
     return toE(data);
