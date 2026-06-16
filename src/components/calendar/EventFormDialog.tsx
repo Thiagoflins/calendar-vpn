@@ -5,19 +5,21 @@ import { COLORS, getColor } from '@/lib/colors';
 import { CustomRecurrenceDialog, CustomRecConfig } from './CustomRecurrenceDialog';
 import { PessoaSelect } from '@/components/shared/PessoaSelect';
 import { PessoaMultiSelect } from '@/components/shared/PessoaMultiSelect';
+import { EquipeSelect } from '@/components/shared/EquipeSelect';
 import { usePeople } from '@/hooks/usePeople';
+import { useTeams } from '@/hooks/useTeams';
 
 type EForm = {
   nome: string; descricao: string; data: string; hora: string; cor: EventColor;
   pastor: string; responsavel: string; observacao: string;
   adoracaoResp: string; adoracaoEquipe: string[];
-  orgResp: string; orgEquipe: string[];
+  orgResp: string; orgTeam: string;
   equipe: string[];
   repetir: RecurrenceType; repetirQtd: number;
 };
 
 function defForm(): EForm {
-  return { nome: '', descricao: '', data: '', hora: '', cor: 'azul', pastor: '', responsavel: '', observacao: '', adoracaoResp: '', adoracaoEquipe: [''], orgResp: '', orgEquipe: [''], equipe: [''], repetir: 'nenhuma', repetirQtd: 8 };
+  return { nome: '', descricao: '', data: '', hora: '', cor: 'azul', pastor: '', responsavel: '', observacao: '', adoracaoResp: '', adoracaoEquipe: [''], orgResp: '', orgTeam: '', equipe: [''], repetir: 'nenhuma', repetirQtd: 8 };
 }
 
 type Props = {
@@ -106,7 +108,7 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
       f.adoracaoResp = editEvent.adoracao?.responsavel ?? '';
       f.adoracaoEquipe = editEvent.adoracao?.membros ?? [];
       f.orgResp = editEvent.organizacao?.responsavel ?? '';
-      f.orgEquipe = editEvent.organizacao?.membros ?? [];
+      f.orgTeam = editEvent.organizacao?.membros?.[0] ?? '';
       f.equipe = editEvent.equipe ?? [];
     }
     return f;
@@ -114,6 +116,7 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
 
   const { data: people = [] } = usePeople();
   const activePeople = people.filter(p => p.ativo);
+  const { data: teams = [] } = useTeams();
 
   const [isCustom, setIsCustom] = useState(false);
   const [customCfg, setCustomCfg] = useState<CustomRecConfig | null>(null);
@@ -129,13 +132,13 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
   const saveLbl = isCustom && !isEdit ? `Salvar (${customCount} eventos)` : form.repetir !== 'nenhuma' && !isEdit ? `Salvar (${form.repetirQtd}×)` : 'Salvar';
 
   const upd = (k: keyof EForm, v: unknown) => setForm(f => ({ ...f, [k]: v }));
-  const updMember = (field: 'adoracaoEquipe' | 'orgEquipe' | 'equipe', i: number, v: string) => {
+  const updMember = (field: 'adoracaoEquipe' | 'equipe', i: number, v: string) => {
     setForm(f => { const a = [...f[field]]; a[i] = v; return { ...f, [field]: a }; });
   };
-  const addMember = (field: 'adoracaoEquipe' | 'orgEquipe' | 'equipe') => {
+  const addMember = (field: 'adoracaoEquipe' | 'equipe') => {
     setForm(f => ({ ...f, [field]: [...f[field], ''] }));
   };
-  const remMember = (field: 'adoracaoEquipe' | 'orgEquipe' | 'equipe', i: number) => {
+  const remMember = (field: 'adoracaoEquipe' | 'equipe', i: number) => {
     setForm(f => ({ ...f, [field]: f[field].filter((_, j) => j !== i) }));
   };
 
@@ -162,18 +165,18 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
 
   const buildBase = (): Omit<CalendarEvent, 'id'> => {
     const b: Omit<CalendarEvent, 'id'> = { type: eventType, nome: form.nome, data: form.data, hora: form.hora, cor: form.cor };
-    if (form.descricao) b.descricao = form.descricao;
-    if (form.observacao) b.observacao = form.observacao;
+    // Sempre inclui campos opcionais (mesmo undefined) para que o update saiba limpar quando vazio
+    b.descricao = form.descricao.trim() || undefined;
+    b.observacao = form.observacao.trim() || undefined;
     if (isCulto) {
-      if (form.pastor) b.pastor = form.pastor;
+      b.pastor = form.pastor.trim() || undefined;
       const am = form.adoracaoEquipe.filter(x => x.trim());
-      if (form.adoracaoResp || am.length) b.adoracao = { responsavel: form.adoracaoResp, membros: am };
-      const om = form.orgEquipe.filter(x => x.trim());
-      if (form.orgResp || om.length) b.organizacao = { responsavel: form.orgResp, membros: om };
+      b.adoracao = (form.adoracaoResp.trim() || am.length) ? { responsavel: form.adoracaoResp, membros: am } : undefined;
+      b.organizacao = (form.orgResp.trim() || form.orgTeam) ? { responsavel: form.orgResp, membros: form.orgTeam ? [form.orgTeam] : [] } : undefined;
     } else {
-      if (form.responsavel) b.responsavel = form.responsavel;
+      b.responsavel = form.responsavel.trim() || undefined;
       const eq = form.equipe.filter(x => x.trim());
-      if (eq.length) b.equipe = eq;
+      b.equipe = eq.length ? eq : undefined;
     }
     return b;
   };
@@ -273,7 +276,7 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'rgba(16,24,40,0.35)', backdropFilter: 'blur(4px)' }}>
-        <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 560, maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 16px 48px rgba(16,24,40,0.16)' }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 560, maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 16px 48px rgba(16,24,40,0.16)' }}>
           <div style={{ padding: '20px 24px', borderBottom: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#101828' }}>{title}</h2>
             <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#9AA3B5' }}>×</button>
@@ -302,7 +305,7 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
               </div>
             )}
 
-            {isCulto && fld('Pastor', <PessoaSelect value={form.pastor} onChange={v => upd('pastor', v)} people={activePeople} placeholder="Buscar pastor..." />)}
+            {isCulto && fld('Pastor', <PessoaSelect value={form.pastor} onChange={v => upd('pastor', v)} people={activePeople.filter(p => p.funcoes.some(f => f.toLowerCase() === 'pastor'))} placeholder="Buscar pastor..." />)}
             {!isCulto && fld('Responsável', <PessoaSelect value={form.responsavel} onChange={v => upd('responsavel', v)} people={activePeople} placeholder="Buscar responsável..." />)}
 
             {isCulto && sec('🎵 Adoração', <>
@@ -312,7 +315,7 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
 
             {isCulto && sec('📋 Organização do Culto', <>
               {fld('Responsável', <PessoaSelect value={form.orgResp} onChange={v => upd('orgResp', v)} people={activePeople} placeholder="Buscar responsável pela organização..." />)}
-              {fld('Equipe', <PessoaMultiSelect values={form.orgEquipe.filter(Boolean)} onChange={v => upd('orgEquipe', v)} people={activePeople} placeholder="Adicionar membro da organização..." />)}
+              {fld('Equipe', <EquipeSelect value={form.orgTeam} onChange={v => upd('orgTeam', v)} teams={teams} placeholder="Selecionar equipe..." />)}
             </>)}
 
             {!isCulto && sec('👥 Equipe', fld('Membros', <PessoaMultiSelect values={form.equipe.filter(Boolean)} onChange={v => upd('equipe', v)} people={activePeople} placeholder="Adicionar membro..." />))}

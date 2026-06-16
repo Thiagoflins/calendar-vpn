@@ -47,9 +47,15 @@ export interface Team {
   nome: string;
   descricao?: string;
   cor?: EventColor;
+  tipo?: string;
   liderId?: string;
   membroIds: string[];
   criadoEm?: string;
+}
+
+export interface TeamType {
+  id: string;
+  nome: string;
 }
 
 export interface Availability {

@@ -64,7 +64,7 @@ export function CustomRecurrenceDialog({ baseDate, onClose, onConfirm }: Props) 
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 440, boxShadow: '0 16px 48px rgba(16,24,40,0.18)', overflow: 'hidden' }}
+        style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 440, boxShadow: '0 16px 48px rgba(16,24,40,0.18)', overflow: 'hidden' }}
       >
         {/* Header */}
         <div style={{ padding: '22px 24px 18px', borderBottom: '1px solid #E5E7EB' }}>

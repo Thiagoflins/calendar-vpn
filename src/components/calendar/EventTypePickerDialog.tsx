@@ -31,7 +31,7 @@ export function EventTypePickerDialog({ onClose, onPick }: Props) {
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ background: '#fff', borderRadius: 24, padding: '28px 28px 24px', width: '100%', maxWidth: 440, boxShadow: '0 20px 60px rgba(16,24,40,0.18)' }}
+        style={{ background: '#fff', borderRadius: 12, padding: '28px 28px 24px', width: '100%', maxWidth: 440, boxShadow: '0 20px 60px rgba(16,24,40,0.18)' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

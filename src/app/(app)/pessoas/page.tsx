@@ -122,10 +122,10 @@ export default function PessoasPage() {
         </div>
 
         {/* Table */}
-        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)' }}>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'visible', boxShadow: '0 1px 2px rgba(16,24,40,0.04)' }}>
 
           {/* Header */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1.5fr 110px 120px 40px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1.5fr 110px 120px 40px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
             {['Nome', 'Funções', 'Status', 'Cadastro', ''].map((h, i) => (
               <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
             ))}

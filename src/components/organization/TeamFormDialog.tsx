@@ -8,7 +8,7 @@ import { PessoaMultiSelect } from '@/components/shared/PessoaMultiSelect';
 type TForm = Omit<Team, 'id'>;
 
 function defForm(): TForm {
-  return { nome: '', descricao: '', cor: 'azul', liderId: '', membroIds: [] };
+  return { nome: '', descricao: '', cor: 'azul', tipo: '', liderId: '', membroIds: [] };
 }
 
 function initials(name: string) {
@@ -18,12 +18,13 @@ function initials(name: string) {
 type Props = {
   editTeam?: Team | null;
   people: Person[];
+  tiposEquipe?: string[];
   onClose: () => void;
   onSave: (data: TForm) => void;
   onDelete?: (id: string) => void;
 };
 
-export function TeamFormDialog({ editTeam, people, onClose, onSave, onDelete }: Props) {
+export function TeamFormDialog({ editTeam, people, tiposEquipe = [], onClose, onSave, onDelete }: Props) {
   const [form, setForm] = useState<TForm>(() =>
     editTeam ? { ...editTeam, membroIds: [...(editTeam.membroIds ?? [])] } : defForm()
   );
@@ -51,7 +52,7 @@ export function TeamFormDialog({ editTeam, people, onClose, onSave, onDelete }: 
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 520, maxHeight: '92vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(16,24,40,0.18)' }}
+        style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 520, maxHeight: '92vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(16,24,40,0.18)' }}
       >
         {/* Header */}
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #F0F2F5', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -80,6 +81,18 @@ export function TeamFormDialog({ editTeam, people, onClose, onSave, onDelete }: 
               style={{ width: '100%', height: 40, padding: '0 12px', borderRadius: 10, border: '1px solid #D1D5DB', fontSize: 14, outline: 'none', background: '#fff', boxSizing: 'border-box' }}
             />
           ), true)}
+
+          {tiposEquipe.length > 0 && fld('Tipo de equipe', (
+            <select
+              value={form.tipo ?? ''}
+              onChange={e => upd('tipo', e.target.value)}
+              style={{ width: '100%', height: 40, padding: '0 12px', borderRadius: 10, border: '1px solid #D1D5DB', fontSize: 14, outline: 'none', background: '#fff', boxSizing: 'border-box', color: form.tipo ? '#101828' : '#9CA3AF', cursor: 'pointer' }}
+            >
+              <option value="">Selecionar tipo...</option>
+              {tiposEquipe.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          ))}
+
           {fld('Descrição', (
             <textarea
               value={form.descricao ?? ''}
