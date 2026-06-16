@@ -140,17 +140,6 @@ export function Header({ onAddEvent, onAddPerson, onAddTeam }: HeaderProps) {
         </button>
       )}
 
-      {page === 'pessoas' && (
-        <button onClick={onAddPerson} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}>
-          <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Membro
-        </button>
-      )}
-
-      {page === 'organizacao' && (
-        <button onClick={onAddTeam} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}>
-          <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Equipe
-        </button>
-      )}
 
       {/* User dropdown */}
       <div ref={dropdownRef} style={{ position: 'relative', marginLeft: 8 }}>

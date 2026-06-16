@@ -97,12 +97,9 @@ export default function OrganizacaoPage() {
             </div>
             <button
               onClick={() => { setEditTeam(null); setShowTeamForm(true); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 20, border: '1px solid #E5E7EB', background: '#fff', color: '#374151', cursor: 'pointer', fontSize: 13, fontWeight: 600, boxShadow: '0 1px 2px rgba(16,24,40,0.05)', transition: 'all 0.15s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2E5AAC'; (e.currentTarget as HTMLButtonElement).style.color = '#2E5AAC'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLButtonElement).style.color = '#374151'; }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}
             >
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>
-              Nova Equipe
+              <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Equipe
             </button>
           </div>
 
@@ -210,12 +207,9 @@ export default function OrganizacaoPage() {
             </div>
             <button
               onClick={() => { setEditFuncao(null); setShowFuncaoForm(true); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 20, border: '1px solid #E5E7EB', background: '#fff', color: '#374151', cursor: 'pointer', fontSize: 13, fontWeight: 600, boxShadow: '0 1px 2px rgba(16,24,40,0.05)', transition: 'all 0.15s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2E5AAC'; (e.currentTarget as HTMLButtonElement).style.color = '#2E5AAC'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLButtonElement).style.color = '#374151'; }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}
             >
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>
-              Nova Função
+              <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Função
             </button>
           </div>
 
