@@ -1,8 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Person } from '@/types';
-
-const FNS = ['Pastor','Vocal','Teclado','Bateria','Baixo','Guitarra','Percussão','Violão','Mídia','Recepção','Pregador','Organização','Diaconato','Ujv'];
 
 type PForm = Omit<Person, 'id'>;
 
@@ -12,19 +10,37 @@ function defForm(): PForm {
 
 type Props = {
   editPerson?: Person | null;
+  funcoes?: string[];
   onClose: () => void;
   onSave: (data: PForm) => void;
 };
 
-export function PersonFormDialog({ editPerson, onClose, onSave }: Props) {
+export function PersonFormDialog({ editPerson, funcoes = [], onClose, onSave }: Props) {
   const [form, setForm] = useState<PForm>(() => editPerson ? { ...editPerson } : defForm());
+  const [fnOpen, setFnOpen] = useState(false);
+  const [fnSearch, setFnSearch] = useState('');
+  const fnRef = useRef<HTMLDivElement>(null);
   const isEdit = !!editPerson;
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (fnRef.current && !fnRef.current.contains(e.target as Node)) {
+        setFnOpen(false); setFnSearch('');
+      }
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const upd = (k: keyof PForm, v: unknown) => setForm(f => ({ ...f, [k]: v }));
   const toggleFn = (fn: string) => setForm(f => ({
     ...f,
     funcoes: f.funcoes.includes(fn) ? f.funcoes.filter(x => x !== fn) : [...f.funcoes, fn],
   }));
+
+  const filteredFuncoes = funcoes.filter(fn =>
+    fn.toLowerCase().includes(fnSearch.toLowerCase())
+  );
 
   const inp = (val: string, onChange: (v: string) => void, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <input value={val} onChange={e => onChange(e.target.value)} style={{ width: '100%', height: 40, padding: '0 12px', borderRadius: 10, border: '1px solid #D1D5DB', fontSize: 14, outline: 'none', background: '#fff', boxSizing: 'border-box' }} {...props} />
@@ -49,17 +65,63 @@ export function PersonFormDialog({ editPerson, onClose, onSave }: Props) {
           {fld('E-mail', inp(form.email ?? '', v => upd('email', v), { type: 'email', placeholder: 'email@exemplo.com' }))}
           {fld('Telefone', inp(form.telefone ?? '', v => upd('telefone', v), { type: 'tel', placeholder: '(11) 99999-0000' }))}
 
-          <div style={{ marginBottom: 14 }}>
+          <div style={{ marginBottom: 14 }} ref={fnRef}>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 8 }}>Funções</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {FNS.map(fn => {
-                const on = form.funcoes.includes(fn);
-                return (
-                  <button key={fn} onClick={() => toggleFn(fn)} style={{ padding: '4px 12px', borderRadius: 999, border: '1px solid', borderColor: on ? '#2E5AAC' : '#E5E7EB', background: on ? '#E6F1FB' : '#fff', color: on ? '#2E5AAC' : '#6B7280', cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'all 0.1s' }}>
-                    {fn}
-                  </button>
-                );
-              })}
+
+            {/* Chips das selecionadas */}
+            {form.funcoes.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
+                {form.funcoes.map(fn => (
+                  <div key={fn} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px 3px 10px', borderRadius: 999, background: '#EEF2FF', border: '1px solid #C7D7F5' }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: '#2E5AAC' }}>{fn}</span>
+                    <button
+                      onMouseDown={e => { e.preventDefault(); toggleFn(fn); }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B9BD4', fontSize: 15, padding: 0, lineHeight: 1, display: 'flex', alignItems: 'center' }}
+                    >×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Input com dropdown */}
+            <div style={{ position: 'relative' }}>
+              <input
+                value={fnSearch}
+                onChange={e => { setFnSearch(e.target.value); setFnOpen(true); }}
+                onFocus={() => setFnOpen(true)}
+                placeholder={form.funcoes.length === 0 ? 'Buscar e selecionar funções...' : 'Adicionar mais...'}
+                style={{ width: '100%', height: 40, padding: '0 12px', borderRadius: 10, border: `1px solid ${fnOpen ? '#2E5AAC' : '#D1D5DB'}`, fontSize: 14, outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
+              />
+
+              {fnOpen && (
+                <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 400, background: '#fff', borderRadius: 10, boxShadow: '0 8px 24px rgba(16,24,40,0.13)', border: '1px solid #E5E7EB', overflow: 'hidden' }}>
+                  <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                    {filteredFuncoes.length === 0 ? (
+                      <div style={{ padding: '14px 12px', textAlign: 'center', color: '#9AA3B5', fontSize: 13 }}>Nenhuma função encontrada</div>
+                    ) : filteredFuncoes.map((fn, i) => {
+                      const sel = form.funcoes.includes(fn);
+                      return (
+                        <div
+                          key={fn}
+                          onMouseDown={e => { e.preventDefault(); toggleFn(fn); setFnSearch(''); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', background: sel ? '#EEF2FF' : i % 2 === 0 ? '#fff' : '#FAFBFC', cursor: 'pointer', borderBottom: i < filteredFuncoes.length - 1 ? '1px solid #F3F4F6' : 'none' }}
+                        >
+                          <div style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${sel ? '#2E5AAC' : '#D1D5DB'}`, background: sel ? '#2E5AAC' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            {sel && <span style={{ color: '#fff', fontSize: 10, fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                          </div>
+                          <span style={{ fontSize: 14, fontWeight: sel ? 600 : 400, color: '#101828' }}>{fn}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {form.funcoes.length > 0 && (
+                    <div style={{ padding: '7px 12px', borderTop: '1px solid #F3F4F6', background: '#FAFBFC', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 12, color: '#6B7280' }}>{form.funcoes.length} selecionada{form.funcoes.length !== 1 ? 's' : ''}</span>
+                      <button onMouseDown={e => { e.preventDefault(); setFnOpen(false); }} style={{ fontSize: 12, fontWeight: 600, color: '#2E5AAC', background: 'none', border: 'none', cursor: 'pointer' }}>Concluir</button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

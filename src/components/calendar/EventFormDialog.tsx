@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { CalendarEvent, EventColor, EventType, RecurrenceType } from '@/types';
 import { COLORS, getColor } from '@/lib/colors';
 import { CustomRecurrenceDialog, CustomRecConfig } from './CustomRecurrenceDialog';
+import { PessoaSelect } from '@/components/shared/PessoaSelect';
+import { PessoaMultiSelect } from '@/components/shared/PessoaMultiSelect';
+import { usePeople } from '@/hooks/usePeople';
 
 type EForm = {
   nome: string; descricao: string; data: string; hora: string; cor: EventColor;
@@ -101,13 +104,16 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
       f.responsavel = editEvent.responsavel ?? '';
       f.observacao = editEvent.observacao ?? '';
       f.adoracaoResp = editEvent.adoracao?.responsavel ?? '';
-      f.adoracaoEquipe = editEvent.adoracao?.membros?.length ? [...editEvent.adoracao.membros, ''] : [''];
+      f.adoracaoEquipe = editEvent.adoracao?.membros ?? [];
       f.orgResp = editEvent.organizacao?.responsavel ?? '';
-      f.orgEquipe = editEvent.organizacao?.membros?.length ? [...editEvent.organizacao.membros, ''] : [''];
-      f.equipe = editEvent.equipe?.length ? [...editEvent.equipe, ''] : [''];
+      f.orgEquipe = editEvent.organizacao?.membros ?? [];
+      f.equipe = editEvent.equipe ?? [];
     }
     return f;
   });
+
+  const { data: people = [] } = usePeople();
+  const activePeople = people.filter(p => p.ativo);
 
   const [isCustom, setIsCustom] = useState(false);
   const [customCfg, setCustomCfg] = useState<CustomRecConfig | null>(null);
@@ -296,20 +302,20 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
               </div>
             )}
 
-            {isCulto && fld('Pastor', inp(form.pastor, v => upd('pastor', v), { placeholder: 'Nome do pastor' }))}
-            {!isCulto && fld('Responsável', inp(form.responsavel, v => upd('responsavel', v), { placeholder: 'Nome do responsável' }))}
+            {isCulto && fld('Pastor', <PessoaSelect value={form.pastor} onChange={v => upd('pastor', v)} people={activePeople} placeholder="Buscar pastor..." />)}
+            {!isCulto && fld('Responsável', <PessoaSelect value={form.responsavel} onChange={v => upd('responsavel', v)} people={activePeople} placeholder="Buscar responsável..." />)}
 
             {isCulto && sec('🎵 Adoração', <>
-              {fld('Responsável', inp(form.adoracaoResp, v => upd('adoracaoResp', v), { placeholder: 'Responsável pela adoração' }))}
-              <EquipeField field="adoracaoEquipe" label="Equipe" />
+              {fld('Responsável', <PessoaSelect value={form.adoracaoResp} onChange={v => upd('adoracaoResp', v)} people={activePeople} placeholder="Buscar responsável pela adoração..." />)}
+              {fld('Equipe', <PessoaMultiSelect values={form.adoracaoEquipe.filter(Boolean)} onChange={v => upd('adoracaoEquipe', v)} people={activePeople} placeholder="Adicionar membro da adoração..." />)}
             </>)}
 
             {isCulto && sec('📋 Organização do Culto', <>
-              {fld('Responsável', inp(form.orgResp, v => upd('orgResp', v), { placeholder: 'Responsável pela organização' }))}
-              <EquipeField field="orgEquipe" label="Equipe" />
+              {fld('Responsável', <PessoaSelect value={form.orgResp} onChange={v => upd('orgResp', v)} people={activePeople} placeholder="Buscar responsável pela organização..." />)}
+              {fld('Equipe', <PessoaMultiSelect values={form.orgEquipe.filter(Boolean)} onChange={v => upd('orgEquipe', v)} people={activePeople} placeholder="Adicionar membro da organização..." />)}
             </>)}
 
-            {!isCulto && sec('👥 Equipe', <EquipeField field="equipe" label="Membros" />)}
+            {!isCulto && sec('👥 Equipe', fld('Membros', <PessoaMultiSelect values={form.equipe.filter(Boolean)} onChange={v => upd('equipe', v)} people={activePeople} placeholder="Adicionar membro..." />))}
 
             {fld('Observação', ta(form.observacao, v => upd('observacao', v)))}
 

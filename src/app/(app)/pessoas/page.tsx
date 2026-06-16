@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PersonFormDialog } from '@/components/people/PersonFormDialog';
 import { usePeople, useCreatePerson, useUpdatePerson, useDeactivatePerson } from '@/hooks/usePeople';
+import { useFuncoes } from '@/hooks/useFuncoes';
 import { Person } from '@/types';
 import { getColor, COLORS } from '@/lib/colors';
 
@@ -12,6 +13,8 @@ function initials(name: string) {
 
 export default function PessoasPage() {
   const { data: people = [] } = usePeople();
+  const { data: funcoesList = [] } = useFuncoes();
+  const funcaoNomes = funcoesList.map(f => f.nome);
   const createPerson = useCreatePerson();
   const updatePerson = useUpdatePerson();
   const deactivatePerson = useDeactivatePerson();
@@ -107,6 +110,7 @@ export default function PessoasPage() {
       {showForm && (
         <PersonFormDialog
           editPerson={editPerson}
+          funcoes={funcaoNomes}
           onClose={() => { setShowForm(false); setEditPerson(null); }}
           onSave={handleSave}
         />
