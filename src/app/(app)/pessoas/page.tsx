@@ -70,12 +70,6 @@ export default function PessoasPage() {
 
       <div style={{ padding: '28px 28px 80px' }}>
 
-        {/* Page header */}
-        <div style={{ marginBottom: 20 }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 600, color: '#101828' }}>Membros</h1>
-          <p style={{ margin: '3px 0 0', fontSize: 13, color: '#9AA3B5', fontWeight: 400 }}>Gerencie os membros e suas funções no grupo.</p>
-        </div>
-
         {/* Controls bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
 

@@ -182,12 +182,6 @@ export default function OrganizacaoPage() {
 
       <div style={{ padding: '28px 28px 80px' }}>
 
-        {/* ── Page header ── */}
-        <div style={{ marginBottom: 24 }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 600, color: '#101828' }}>Organização</h1>
-          <p style={{ margin: '3px 0 0', fontSize: 13, color: '#9AA3B5' }}>Gerencie equipes, funções e categorias do ministério.</p>
-        </div>
-
         {/* ── Stat strip ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
           {[
