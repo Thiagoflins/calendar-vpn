@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sistema VPN — Casa Apostólica Voz para as Nações',
+  title: 'CAVN',
   description: 'Sistema de gestão de calendário e equipes',
 };
 

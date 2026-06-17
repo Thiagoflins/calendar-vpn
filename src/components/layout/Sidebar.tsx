@@ -91,7 +91,7 @@ export function Sidebar() {
       >
         <Image src="/logo-azul.png" alt="Logo VPN" width={38} height={38} style={{ borderRadius: 10, flexShrink: 0 }} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, color: '#656b76', lineHeight: 1.3 }}>Casa Apostólica</div>
+          <div style={{ fontSize: 13, color: '#5e636c', lineHeight: 1.3 }}>Casa Apostólica</div>
           <div style={{ fontSize: 13, fontWeight: 600, color: '#101828', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Voz para as Nações</div>
         </div>
       </div>
