@@ -5,8 +5,6 @@ import { AppShell } from '@/components/layout/AppShell';
 import { DashboardWeekCalendar } from '@/components/dashboard/DashboardWeekCalendar';
 import { EventDetailModal } from '@/components/calendar/EventDetailModal';
 import { useEvents, useRemoveEvent } from '@/hooks/useEvents';
-import { usePeople } from '@/hooks/usePeople';
-import { useTeams } from '@/hooks/useTeams';
 import { getColor } from '@/lib/colors';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -28,8 +26,6 @@ export default function HomePage() {
   const todayStr = fd(today);
 
   const { data: events = [] } = useEvents();
-  const { data: people = [] } = usePeople();
-  const { data: teams = [] } = useTeams();
   const deleteEvent = useRemoveEvent();
 
   const [weekDate, setWeekDate] = useState(today);
@@ -41,13 +37,6 @@ export default function HomePage() {
     .filter(e => e.data >= todayStr)
     .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora))
     .slice(0, 10);
-
-  const thisMonth = events.filter(e => { const [y, m] = e.data.split('-').map(Number); return y === 2026 && m === 6; }).length;
-  const activeCount = people.filter(p => p.ativo).length;
-  const thisWeek = events.filter(e => {
-    const ws = fd(weekStart(today)), we = fd(weekEnd(today));
-    return e.data >= ws && e.data <= we;
-  }).length;
 
   const ws = weekStart(weekDate);
   const we = weekEnd(weekDate);
@@ -164,21 +153,6 @@ export default function HomePage() {
                 );
               })}
             </div>
-          </div>
-
-          {/* Stats — compacto */}
-          <div style={{ background: '#fff', borderRadius: 6, border: '1px solid #EEF0F4', boxShadow: '0 1px 3px rgba(16,24,40,0.04)', padding: '12px 14px', flexShrink: 0 }}>
-            {[
-              { label: 'Esta semana', val: thisWeek, color: '#2E5AAC', bg: '#EBF2FC' },
-              { label: 'Eventos em junho', val: thisMonth, color: '#1D9E75', bg: '#E3F7F0' },
-              { label: 'Membros ativos', val: activeCount, color: '#7F77DD', bg: '#EEEDFE' },
-              { label: 'Equipes', val: teams.length, color: '#BA7517', bg: '#FAEEDA' },
-            ].map((s, i, arr) => (
-              <div key={s.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: i < arr.length - 1 ? '1px solid #F5F6F8' : 'none' }}>
-                <span style={{ fontSize: 12, color: '#6B7280' }}>{s.label}</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: s.color, background: s.bg, padding: '2px 10px', borderRadius: 4 }}>{s.val}</span>
-              </div>
-            ))}
           </div>
 
         </div>

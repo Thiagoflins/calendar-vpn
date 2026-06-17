@@ -100,6 +100,7 @@ export function DashboardWeekCalendar({ date, events, onEventClick, onDayClick }
             {/* Events */}
             {day.evs.map(ev => {
               const cl = getColor(ev.cor);
+              const person = ev.pastor || ev.responsavel || '';
               return (
                 <div
                   key={ev.id}
@@ -109,20 +110,27 @@ export function DashboardWeekCalendar({ date, events, onEventClick, onDayClick }
                     top: evTop(ev.hora) + 2,
                     left: 3,
                     right: 3,
-                    minHeight: 40,
+                    minHeight: 44,
                     background: cl.bg,
-                    borderRadius: 6,
-                    padding: '6px 8px',
+                    borderRadius: 8,
+                    padding: '7px 9px',
                     cursor: 'pointer',
-                    borderLeft: `3px solid ${cl.dot}`,
+                    border: `1px solid ${cl.dot}30`,
+                    borderLeft: `4px solid ${cl.dot}`,
+                    boxShadow: '0 1px 4px rgba(16,24,40,0.07)',
                     zIndex: 2,
-                    transition: 'filter 0.12s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
+                    transition: 'box-shadow 0.12s',
                   }}
-                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.filter = 'brightness(0.96)'}
-                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.filter = ''}
+                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 12px rgba(16,24,40,0.12)'}
+                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(16,24,40,0.07)'}
                 >
-                  <div style={{ fontSize: 11, fontWeight: 500, color: cl.text, lineHeight: '1.3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.nome}</div>
-                  <div style={{ fontSize: 10, color: cl.dot, marginTop: 1 }}>{ev.hora.slice(0, 5)}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: cl.text, lineHeight: 1.4 }}>{ev.nome}</div>
+                  <div style={{ fontSize: 10, color: cl.text, opacity: 0.65, fontWeight: 500 }}>
+                    {ev.hora.slice(0, 5)}{person ? ` · ${person.split(' ')[0]}` : ''}
+                  </div>
                 </div>
               );
             })}

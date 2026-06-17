@@ -68,17 +68,32 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
             ))}
             {day.evs.map(ev => {
               const cl = getColor(ev.cor);
-              const icon = ev.type === 'culto' ? '⛪' : '📅';
+              const participants: string[] = [];
+              if (ev.pastor) participants.push(ev.pastor);
+              if (ev.responsavel) participants.push(ev.responsavel);
+              if (ev.adoracao?.responsavel) participants.push(ev.adoracao.responsavel);
+              const visible = participants.slice(0, 3);
+              const extra = participants.length - visible.length;
               return (
                 <div
                   key={ev.id}
                   onClick={() => onEventClick(ev.id)}
-                  style={{ position: 'absolute', top: evTop(ev.hora), left: 4, right: 4, minHeight: 52, background: cl.bg, borderRadius: 6, padding: '7px 10px', cursor: 'pointer', borderLeft: `3px solid ${cl.dot}`, boxShadow: '0 1px 4px rgba(16,24,40,0.06)', zIndex: 1 }}
+                  style={{ position: 'absolute', top: evTop(ev.hora), left: 4, right: 4, minHeight: 60, background: cl.bg, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', border: `1px solid ${cl.dot}30`, borderLeft: `4px solid ${cl.dot}`, boxShadow: '0 1px 4px rgba(16,24,40,0.07)', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 3, transition: 'box-shadow 0.15s' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 12px rgba(16,24,40,0.12)'}
+                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(16,24,40,0.07)'}
                 >
-                  <div style={{ fontSize: 12, fontWeight: 500, color: cl.text, lineHeight: '1.3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{icon} {ev.nome}</div>
-                  <div style={{ fontSize: 10, color: cl.dot, marginTop: 2 }}>{ev.hora.slice(0, 5)}</div>
-                  {ev.adoracao?.responsavel && <div style={{ fontSize: 11, color: cl.text, opacity: 0.7, marginTop: 2 }}>🎵 {ev.adoracao.responsavel.split(' ')[0]}</div>}
-                  {ev.equipe?.length ? <div style={{ fontSize: 11, color: cl.text, opacity: 0.7, marginTop: 2 }}>👥 {ev.equipe[0].split(' ')[0]}{ev.equipe.length > 1 ? `+${ev.equipe.length - 1}` : ''}</div> : null}
+                  <div style={{ fontSize: 12, fontWeight: 700, color: cl.text, lineHeight: 1.4 }}>{ev.nome}</div>
+                  <div style={{ fontSize: 10, color: cl.text, opacity: 0.65, fontWeight: 500 }}>{ev.hora.slice(0, 5)}{ev.pastor ? ` · ${ev.pastor.split(' ')[0]}` : ''}</div>
+                  {visible.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: 'auto', paddingTop: 2 }}>
+                      {visible.map((name, i) => (
+                        <span key={i} title={name} style={{ marginLeft: i > 0 ? -6 : 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: cl.dot, color: '#fff', fontSize: 8, fontWeight: 700, border: `2px solid ${cl.bg}`, flexShrink: 0 }}>
+                          {name.trim().split(/\s+/).map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()}
+                        </span>
+                      ))}
+                      {extra > 0 && <span style={{ fontSize: 9, color: cl.text, opacity: 0.6, marginLeft: 5 }}>+{extra}</span>}
+                    </div>
+                  )}
                 </div>
               );
             })}

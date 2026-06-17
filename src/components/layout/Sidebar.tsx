@@ -3,6 +3,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useEvents } from '@/hooks/useEvents';
+import { usePeople } from '@/hooks/usePeople';
+import { useTeams } from '@/hooks/useTeams';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAY_INITIALS = ['S','T','Q','Q','S','S','D'];
@@ -33,6 +35,8 @@ export function Sidebar() {
   const todayStr = fd(today);
   const [miniDate, setMiniDate] = useState(new Date(2026, 5, 1));
   const { data: events = [] } = useEvents();
+  const { data: people = [] } = usePeople();
+  const { data: teams = [] } = useTeams();
 
   const y = miniDate.getFullYear(), m = miniDate.getMonth();
   const first = new Date(y, m, 1);
@@ -44,6 +48,12 @@ export function Sidebar() {
     const hasEv = events.some(e => e.data === ds);
     return { day: d.getDate(), ds, inM, isT, hasEv };
   });
+
+  const wsStart = (() => { const r = new Date(today); let dw = r.getDay(); dw = dw === 0 ? 6 : dw - 1; r.setDate(r.getDate() - dw); return fd(r); })();
+  const wsEnd = (() => { const r = new Date(today); let dw = r.getDay(); dw = dw === 0 ? 6 : dw - 1; r.setDate(r.getDate() - dw + 6); return fd(r); })();
+  const thisWeek = events.filter(e => e.data >= wsStart && e.data <= wsEnd).length;
+  const thisMonth = events.filter(e => { const [y, m] = e.data.split('-').map(Number); return y === today.getFullYear() && m === today.getMonth() + 1; }).length;
+  const activeCount = people.filter(p => p.ativo).length;
 
   const nextEv = events.filter(e => e.data >= todayStr).sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora))[0] ?? null;
   const activePath = '/' + pathname.split('/')[1];
@@ -122,7 +132,7 @@ export function Sidebar() {
       )}
 
       {/* Navigation */}
-      <nav style={{ padding: '8px', flex: 1, overflowY: 'auto' }}>
+      <nav style={{ padding: '8px', flex: 1, overflow: 'hidden' }}>
         <div style={{ fontSize: 9, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 8px', marginBottom: 3 }}>Menu</div>
         {NAV_ITEMS.map(item => item.soon ? (
           <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', borderRadius: 5, color: '#3D4455', fontSize: 13, marginBottom: 1, cursor: 'default' }}>
@@ -149,13 +159,17 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* My Calendars */}
-      <div style={{ padding: '10px 16px 12px', borderTop: '1px solid #2F3848', flexShrink: 0 }}>
-        <div style={{ fontSize: 9, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Meus Calendários</div>
-        {[{ l: 'Cultos', c: '#2E5AAC' }, { l: 'Atividades', c: '#1D9E75' }, { l: 'Especiais', c: '#7F77DD' }].map(item => (
-          <div key={item.l} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-            <div style={{ width: 9, height: 9, borderRadius: 2, background: item.c, flexShrink: 0 }} />
-            <span style={{ fontSize: 11, color: '#9AA3B5' }}>{item.l}</span>
+      {/* Stats */}
+      <div style={{ padding: '10px 14px 12px', borderTop: '1px solid #2F3848', flexShrink: 0 }}>
+        {[
+          { label: 'Esta semana',     val: thisWeek,    color: '#4A7BC8', bg: '#1E2E47' },
+          { label: 'Eventos no mês',  val: thisMonth,   color: '#1D9E75', bg: '#13312A' },
+          { label: 'Membros ativos',  val: activeCount, color: '#7F77DD', bg: '#252048' },
+          { label: 'Equipes',         val: teams.length,color: '#BA7517', bg: '#312409' },
+        ].map((s, i, arr) => (
+          <div key={s.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < arr.length - 1 ? '1px solid #2A3347' : 'none' }}>
+            <span style={{ fontSize: 11, color: '#9AA3B5' }}>{s.label}</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: s.color, background: s.bg, padding: '1px 8px', borderRadius: 4, minWidth: 24, textAlign: 'center' }}>{s.val}</span>
           </div>
         ))}
       </div>
