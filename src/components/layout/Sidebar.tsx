@@ -166,6 +166,24 @@ export function Sidebar() {
             </button>
           );
         })()}
+        <button
+          onClick={async () => { await authService.signOut(); router.push('/login'); }}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+            padding: '8px 10px', borderRadius: 8, border: 'none',
+            cursor: 'pointer', background: 'transparent', color: '#5A6070',
+            fontSize: 13, fontWeight: 400, textAlign: 'left', transition: 'background 0.12s, color 0.12s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEF2F2'; (e.currentTarget as HTMLButtonElement).style.color = '#EF4444'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#5A6070'; }}
+        >
+          <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+            <svg width="17" height="17" fill="none" viewBox="0 0 24 24">
+              <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9M16 17L21 12M21 12L16 7M21 12H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
+          <span>Sair</span>
+        </button>
       </div>
 
       {/* User profile */}
