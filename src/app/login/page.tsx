@@ -123,17 +123,17 @@ export default function LoginPage() {
           <div style={{
             position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%',
             background: 'linear-gradient(to top, rgba(2,6,9,0.88) 0%, transparent 100%)',
-            pointerEvents: 'none',
+            pointerEvents: 'none',  
           }} />
 
           {/* Logo */}
           <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
             <Image src="/logo-azul.png" alt="Logo VPN" width={42} height={42} style={{ borderRadius: 9, flexShrink: 0 }} />
             <div>
-              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.3 }}>
+              <div style={{ fontSize: 9, color: 'rgba(255, 255, 255, 0.94)', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.3 }}>
                 Casa Apostólica
               </div>
-              <div style={{ fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.75)', lineHeight: 1.2 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255, 255, 255, 0.98)', lineHeight: 1.2 }}>
                 Voz para as Nações
               </div>
             </div>
@@ -143,8 +143,8 @@ export default function LoginPage() {
           <div style={{ position: 'relative', zIndex: 1 }}>
             <h2 style={{
               fontFamily: "'Outfit', sans-serif",
-              fontSize: 24, fontWeight: 300,
-              color: 'rgba(255,255,255,0.75)', margin: '0 0 12px',
+              fontSize: 24, fontWeight: 350,
+              color: 'rgb(255, 255, 255)', margin: '0 0 12px',
               lineHeight: 1.5, letterSpacing: '0.01em',
             }}>
               Habilitar para{' '}
@@ -160,9 +160,9 @@ export default function LoginPage() {
               um povo preparado.
             </h2>
             <p style={{
-              fontSize: 11, color: 'rgba(255,255,255,0.45)',
+              fontSize: 11, color: 'rgb(255, 255, 255)',
               margin: 0, letterSpacing: '0.18em',
-              textTransform: 'uppercase', fontWeight: 400,
+              textTransform: 'uppercase', fontWeight: 450,
             }}>
               Lucas 1:17
             </p>
@@ -187,7 +187,7 @@ export default function LoginPage() {
               }}>
                 Bem-vindo!
               </h1>
-              <p style={{ fontSize: 13, color: '#C4BFB8', margin: 0, fontWeight: 400 }}>
+              <p style={{ fontSize: 13, color: '#C4BFB8', margin: 0, fontWeight: 500 }}>
                 Entre com suas credenciais para continuar.
               </p>
             </div>

@@ -6,6 +6,8 @@ import { usePeople, useCreatePerson, useUpdatePerson, useDeactivatePerson } from
 import { useFuncoes } from '@/hooks/useFuncoes';
 import { Person } from '@/types';
 
+const PAGE_SIZE = 10;
+
 function initials(name: string) {
   return name.trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase();
 }
@@ -55,7 +57,7 @@ const CSS = `
 
   .vpn-row {
     display: grid;
-    grid-template-columns: 2.8fr 1.4fr 108px 114px 154px;
+    grid-template-columns: 2.8fr 1.4fr 108px 114px 72px;
     align-items: center;
     padding: 0 28px;
     height: 62px;
@@ -114,6 +116,13 @@ const CSS = `
   .vpn-act-deact { color: #FBBFBF; }
   .vpn-act-deact:hover { background: #FEF2F2; color: #DC2626; }
 
+  .vpn-pg-btn {
+    width: 28px; height: 28px; border-radius: 6px; border: 1px solid #E5E7EB;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px; transition: background 0.12s, color 0.12s;
+  }
+  .vpn-pg-btn:disabled { cursor: not-allowed; }
+
   .vpn-toast-btn {
     background: none; border: none; cursor: pointer;
     font-size: 12px; font-weight: 500; padding: 2px 6px; border-radius: 4px;
@@ -137,6 +146,7 @@ export default function PessoasPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'todos' | 'ativo' | 'inativo'>('todos');
   const [funcaoFilter, setFuncaoFilter] = useState('');
+  const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [editPerson, setEditPerson] = useState<Person | null>(null);
   const [toast, setToast] = useState<Toast>(null);
@@ -147,6 +157,8 @@ export default function PessoasPage() {
     const fn = !funcaoFilter || p.funcoes.includes(funcaoFilter);
     return nm && st && fn;
   });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const activeCount = people.filter(p => p.ativo).length;
   const inactiveCount = people.filter(p => !p.ativo).length;
@@ -190,43 +202,6 @@ export default function PessoasPage() {
         className="vpn-page"
         style={{ padding: '36px 36px 80px', background: '#F5F4F1', minHeight: '100%' }}
       >
-        {/* ── Page Header ── */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 30 }}>
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#C4BFB8', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-              Gestão de membros
-            </div>
-            <h1 style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 48, fontWeight: 300, fontStyle: 'italic',
-              color: '#0F0E0C', margin: 0, lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              Pessoas
-            </h1>
-            <p style={{ fontSize: 13, color: '#A8A59E', margin: '7px 0 0', fontWeight: 400 }}>
-              {people.length} {people.length === 1 ? 'membro cadastrado' : 'membros cadastrados'}
-            </p>
-          </div>
-
-          <button
-            className="vpn-add"
-            onClick={() => { setEditPerson(null); setShowForm(true); }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              padding: '11px 22px', borderRadius: 9, border: 'none',
-              background: '#1C3568', color: '#FFFFFF',
-              cursor: 'pointer', fontSize: 13, fontWeight: 500,
-              letterSpacing: '0.01em',
-              boxShadow: '0 2px 8px rgba(28,53,104,0.22)',
-            }}
-          >
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-              <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
-            </svg>
-            Novo membro
-          </button>
-        </div>
 
         {/* ── Stats ── */}
         <div style={{
@@ -277,7 +252,7 @@ export default function PessoasPage() {
             <input
               className="vpn-search"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Buscar por nome ou e-mail…"
               style={{
                 width: '100%', height: 38, padding: '0 12px 0 33px',
@@ -295,7 +270,7 @@ export default function PessoasPage() {
             <select
               className="vpn-select"
               value={funcaoFilter}
-              onChange={e => setFuncaoFilter(e.target.value)}
+              onChange={e => { setFuncaoFilter(e.target.value); setPage(1); }}
               style={{
                 height: 38, padding: '0 30px 0 12px',
                 borderRadius: 8, border: '1px solid #ECEAE6',
@@ -328,7 +303,7 @@ export default function PessoasPage() {
               <button
                 key={f.v}
                 className="vpn-seg-btn"
-                onClick={() => setFilter(f.v)}
+                onClick={() => { setFilter(f.v); setPage(1); }}
                 style={{
                   background: filter === f.v ? '#FFFFFF' : 'transparent',
                   color: filter === f.v ? '#0F0E0C' : '#A8A59E',
@@ -341,9 +316,12 @@ export default function PessoasPage() {
             ))}
           </div>
 
-          <div style={{ fontSize: 12, color: '#C4BFB8', paddingLeft: 2 }}>
-            {filtered.length} resultado{filtered.length !== 1 ? 's' : ''}
-          </div>
+          <button
+            onClick={() => { setEditPerson(null); setShowForm(true); }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36 }}
+          >
+            <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> Membro
+          </button>
         </div>
 
         {/* ── Table ── */}
@@ -394,7 +372,7 @@ export default function PessoasPage() {
           )}
 
           {/* Rows */}
-          {filtered.map((p, pi) => {
+          {paged.map((p, pi) => {
             const av = avatarPalette(p.nome);
             return (
               <div
@@ -481,16 +459,41 @@ export default function PessoasPage() {
                         stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
-                  <button className="vpn-act vpn-act-deact" onClick={() => handleDeactivate(p)} title="Desativar">
-                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
-                      <path d="M3 6H5H21M8 6V4C8 3.448 8.448 3 9 3H15C15.552 3 16 3.448 16 4V6M19 6L18.117 19.117C18.052 20.148 17.192 21 16.158 21H7.842C6.808 21 5.948 20.148 5.883 19.117L5 6"
-                        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
+                  {p.ativo && (
+                    <button className="vpn-act vpn-act-deact" onClick={() => handleDeactivate(p)} title="Desativar membro">
+                      <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
+                        <path d="M6.34 6.34L17.66 17.66" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
             );
           })}
+
+          {/* Footer com paginação */}
+          {filtered.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 28px', borderTop: '1px solid #F2F1EE', background: '#FAFAF8' }}>
+              <span style={{ fontSize: 12, color: '#C4BFB8' }}>
+                {filtered.length} resultado{filtered.length !== 1 ? 's' : ''}
+              </span>
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <button className="vpn-pg-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1}
+                    style={{ background: page === 1 ? '#F9FAFB' : '#fff', color: page === 1 ? '#C4C9D4' : '#374151' }}>‹</button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <button key={p} className="vpn-pg-btn" onClick={() => setPage(p)}
+                      style={{ background: p === page ? '#2E5AAC' : '#fff', color: p === page ? '#fff' : '#374151', borderColor: p === page ? '#2E5AAC' : '#E5E7EB', fontWeight: p === page ? 600 : 400 }}>
+                      {p}
+                    </button>
+                  ))}
+                  <button className="vpn-pg-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}
+                    style={{ background: page === totalPages ? '#F9FAFB' : '#fff', color: page === totalPages ? '#C4C9D4' : '#374151' }}>›</button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

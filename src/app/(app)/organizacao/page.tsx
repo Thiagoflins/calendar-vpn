@@ -11,7 +11,7 @@ import { useTeamTypes, useCreateTeamType, useUpdateTeamType, useRemoveTeamType }
 import { Team } from '@/types';
 import { getColor, COLORS } from '@/lib/colors';
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 10;
 type TabId = 'equipes' | 'funcoes' | 'tipos';
 
 const CSS = `
@@ -124,6 +124,7 @@ export default function OrganizacaoPage() {
   const [teamPage, setTeamPage] = useState(1);
   const [funcaoSearch, setFuncaoSearch] = useState('');
   const [funcaoPage, setFuncaoPage] = useState(1);
+  const [tiposPage, setTiposPage] = useState(1);
 
   const filteredTeams = teams.filter(t => !teamSearch || t.nome.toLowerCase().includes(teamSearch.toLowerCase()) || (t.descricao ?? '').toLowerCase().includes(teamSearch.toLowerCase()));
   const teamTotalPages = Math.max(1, Math.ceil(filteredTeams.length / PAGE_SIZE));
@@ -132,6 +133,9 @@ export default function OrganizacaoPage() {
   const filteredFuncoes = funcoes.filter(f => !funcaoSearch || f.nome.toLowerCase().includes(funcaoSearch.toLowerCase()));
   const funcaoTotalPages = Math.max(1, Math.ceil(filteredFuncoes.length / PAGE_SIZE));
   const pagedFuncoes = filteredFuncoes.slice((funcaoPage - 1) * PAGE_SIZE, funcaoPage * PAGE_SIZE);
+
+  const tiposTotalPages = Math.max(1, Math.ceil(teamTypes.length / PAGE_SIZE));
+  const pagedTipos = teamTypes.slice((tiposPage - 1) * PAGE_SIZE, tiposPage * PAGE_SIZE);
 
   const handleSaveTeam = async (data: Omit<Team, 'id'>) => {
     if (editTeam) await updateTeam.mutateAsync({ id: editTeam.id, patch: data });
@@ -333,12 +337,12 @@ export default function OrganizacaoPage() {
             </div>
             {teamTypes.length === 0 ? (
               <EmptyState label="Nenhum tipo cadastrado" icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M7 7H17M7 12H14M7 17H11M4 4H20V20H4V4Z" stroke="#C4C9D4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>} />
-            ) : teamTypes.map((tt, i) => {
+            ) : pagedTipos.map((tt, i) => {
               const equipeCount = teams.filter(t => t.tipo === tt.nome).length;
-              const isLast = i === teamTypes.length - 1;
+              const isLast = i === pagedTipos.length - 1;
               return (
                 <div key={tt.id} className="org-row"
-                  style={{ gridTemplateColumns: '1fr 160px 72px', padding: '11px 20px', borderBottom: isLast ? 'none' : '1px solid #F5F5F5' }}
+                  style={{ gridTemplateColumns: '1fr 160px 72px', padding: '11px 20px', borderBottom: isLast && tiposTotalPages <= 1 ? 'none' : '1px solid #F5F5F5' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 8, background: '#ECFEFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -356,6 +360,7 @@ export default function OrganizacaoPage() {
                 </div>
               );
             })}
+            <Pagination page={tiposPage} total={tiposTotalPages} onChange={p => setTiposPage(p)} />
           </>)}
 
         </div>
