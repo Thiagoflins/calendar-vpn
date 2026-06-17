@@ -2,15 +2,17 @@
 import { Suspense } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { RightSidebar } from './RightSidebar';
 
 type Props = {
   children: React.ReactNode;
   onAddEvent?: () => void;
   onAddPerson?: () => void;
   onAddTeam?: () => void;
+  hideRightSidebar?: boolean;
 };
 
-export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam }: Props) {
+export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam, hideRightSidebar }: Props) {
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F7F9FC', color: '#101828', fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
       <Suspense fallback={null}>
@@ -24,6 +26,11 @@ export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam }: Props
           {children}
         </main>
       </div>
+      {!hideRightSidebar && (
+        <Suspense fallback={null}>
+          <RightSidebar onAddEvent={onAddEvent} />
+        </Suspense>
+      )}
     </div>
   );
 }

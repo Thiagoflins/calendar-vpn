@@ -5,6 +5,14 @@ import { Availability } from '@/types';
 
 const KEY = 'availability';
 
+export function useUnavailableOnDate(date: string) {
+  return useQuery({
+    queryKey: [KEY, 'date', date],
+    queryFn: () => availabilityService.listByRange(date, date),
+    enabled: !!date,
+  });
+}
+
 export function useAvailabilityByPerson(pessoaId: string) {
   return useQuery({ queryKey: [KEY, pessoaId], queryFn: () => availabilityService.listByPerson(pessoaId), enabled: !!pessoaId });
 }

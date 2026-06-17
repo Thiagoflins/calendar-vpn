@@ -12,9 +12,10 @@ type Props = {
   people: Person[];
   mode?: 'nome' | 'id';
   placeholder?: string;
+  unavailableIds?: string[];
 };
 
-export function PessoaSelect({ value, onChange, people, mode = 'nome', placeholder = 'Buscar pessoa...' }: Props) {
+export function PessoaSelect({ value, onChange, people, mode = 'nome', placeholder = 'Buscar pessoa...', unavailableIds = [] }: Props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const ref = useRef<HTMLDivElement>(null);
@@ -109,14 +110,17 @@ export function PessoaSelect({ value, onChange, people, mode = 'nome', placehold
               </div>
             ) : filtered.map((p, i) => {
               const isSel = mode === 'id' ? p.id === value : p.nome === value;
+              const isUnavailable = unavailableIds.includes(p.id);
               return (
                 <div
                   key={p.id}
-                  onMouseDown={e => { e.preventDefault(); pick(p); }}
+                  onMouseDown={e => { e.preventDefault(); if (!isUnavailable) pick(p); }}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px',
                     background: isSel ? '#EEF2FF' : i % 2 === 0 ? '#fff' : '#FAFBFC',
-                    cursor: 'pointer', borderBottom: i < filtered.length - 1 ? '1px solid #F3F4F6' : 'none',
+                    cursor: isUnavailable ? 'not-allowed' : 'pointer',
+                    borderBottom: i < filtered.length - 1 ? '1px solid #F3F4F6' : 'none',
+                    opacity: isUnavailable ? 0.5 : 1,
                   }}
                 >
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: isSel ? '#2E5AAC' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: isSel ? '#fff' : '#6B7280', flexShrink: 0 }}>
@@ -124,9 +128,10 @@ export function PessoaSelect({ value, onChange, people, mode = 'nome', placehold
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: isSel ? 600 : 400, color: '#101828' }}>{p.nome}</div>
-                    {p.funcoes.length > 0 && (
-                      <div style={{ fontSize: 11, color: '#9AA3B5', marginTop: 1 }}>{p.funcoes.slice(0, 3).join(' · ')}</div>
-                    )}
+                    {isUnavailable
+                      ? <div style={{ fontSize: 11, color: '#F59E0B', marginTop: 1 }}>⚠ Indisponível nesta data</div>
+                      : p.funcoes.length > 0 && <div style={{ fontSize: 11, color: '#9AA3B5', marginTop: 1 }}>{p.funcoes.slice(0, 3).join(' · ')}</div>
+                    }
                   </div>
                   {isSel && <span style={{ color: '#2E5AAC', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>✓</span>}
                 </div>

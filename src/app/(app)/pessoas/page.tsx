@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PersonFormDialog } from '@/components/people/PersonFormDialog';
+import { IndisponibilidadeDialog } from '@/components/people/IndisponibilidadeDialog';
 import { usePeople, useCreatePerson, useUpdatePerson, useDeactivatePerson } from '@/hooks/usePeople';
 import { useFuncoes } from '@/hooks/useFuncoes';
 import { Person } from '@/types';
@@ -149,6 +150,7 @@ export default function PessoasPage() {
   const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [editPerson, setEditPerson] = useState<Person | null>(null);
+  const [indispPerson, setIndispPerson] = useState<Person | null>(null);
   const [toast, setToast] = useState<Toast>(null);
 
   const filtered = people.filter(p => {
@@ -459,6 +461,14 @@ export default function PessoasPage() {
                         stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
+                  <button className="vpn-act" onClick={() => setIndispPerson(p)} title="Indisponibilidade" style={{ color: '#C4BFB8' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FFFBEB'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#C4BFB8'; }}
+                  >
+                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                      <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4ZM12 11V13M12 16H12.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
                   {p.ativo && (
                     <button className="vpn-act vpn-act-deact" onClick={() => handleDeactivate(p)} title="Desativar membro">
                       <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
@@ -553,6 +563,13 @@ export default function PessoasPage() {
           funcoes={funcaoNomes}
           onClose={() => { setShowForm(false); setEditPerson(null); }}
           onSave={handleSave}
+        />
+      )}
+
+      {indispPerson && (
+        <IndisponibilidadeDialog
+          person={indispPerson}
+          onClose={() => setIndispPerson(null)}
         />
       )}
     </AppShell>

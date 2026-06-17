@@ -8,6 +8,7 @@ import { PessoaMultiSelect } from '@/components/shared/PessoaMultiSelect';
 import { EquipeSelect } from '@/components/shared/EquipeSelect';
 import { usePeople } from '@/hooks/usePeople';
 import { useTeams } from '@/hooks/useTeams';
+import { useUnavailableOnDate } from '@/hooks/useAvailability';
 
 type EForm = {
   nome: string; descricao: string; data: string; hora: string; cor: EventColor;
@@ -116,6 +117,8 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
 
   const { data: people = [] } = usePeople();
   const activePeople = people.filter(p => p.ativo);
+  const { data: unavailableRecords = [] } = useUnavailableOnDate(form.data);
+  const unavailableIds = unavailableRecords.map(r => r.pessoaId);
   const { data: teams = [] } = useTeams();
 
   const [isCustom, setIsCustom] = useState(false);
@@ -305,20 +308,20 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
               </div>
             )}
 
-            {isCulto && fld('Pastor', <PessoaSelect value={form.pastor} onChange={v => upd('pastor', v)} people={activePeople.filter(p => p.funcoes.some(f => f.toLowerCase() === 'pastor'))} placeholder="Buscar pastor..." />)}
-            {!isCulto && fld('Responsável', <PessoaSelect value={form.responsavel} onChange={v => upd('responsavel', v)} people={activePeople} placeholder="Buscar responsável..." />)}
+            {isCulto && fld('Pastor', <PessoaSelect value={form.pastor} onChange={v => upd('pastor', v)} people={activePeople.filter(p => p.funcoes.some(f => f.toLowerCase() === 'pastor'))} placeholder="Buscar pastor..." unavailableIds={unavailableIds} />)}
+            {!isCulto && fld('Responsável', <PessoaSelect value={form.responsavel} onChange={v => upd('responsavel', v)} people={activePeople} placeholder="Buscar responsável..." unavailableIds={unavailableIds} />)}
 
             {isCulto && sec('🎵 Adoração', <>
-              {fld('Responsável', <PessoaSelect value={form.adoracaoResp} onChange={v => upd('adoracaoResp', v)} people={activePeople} placeholder="Buscar responsável pela adoração..." />)}
-              {fld('Equipe', <PessoaMultiSelect values={form.adoracaoEquipe.filter(Boolean)} onChange={v => upd('adoracaoEquipe', v)} people={activePeople} placeholder="Adicionar membro da adoração..." />)}
+              {fld('Responsável', <PessoaSelect value={form.adoracaoResp} onChange={v => upd('adoracaoResp', v)} people={activePeople} placeholder="Buscar responsável pela adoração..." unavailableIds={unavailableIds} />)}
+              {fld('Equipe', <PessoaMultiSelect values={form.adoracaoEquipe.filter(Boolean)} onChange={v => upd('adoracaoEquipe', v)} people={activePeople} placeholder="Adicionar membro da adoração..." unavailableIds={unavailableIds} />)}
             </>)}
 
             {isCulto && sec('📋 Organização do Culto', <>
-              {fld('Responsável', <PessoaSelect value={form.orgResp} onChange={v => upd('orgResp', v)} people={activePeople} placeholder="Buscar responsável pela organização..." />)}
+              {fld('Responsável', <PessoaSelect value={form.orgResp} onChange={v => upd('orgResp', v)} people={activePeople} placeholder="Buscar responsável pela organização..." unavailableIds={unavailableIds} />)}
               {fld('Equipe', <EquipeSelect value={form.orgTeam} onChange={v => upd('orgTeam', v)} teams={teams} placeholder="Selecionar equipe..." />)}
             </>)}
 
-            {!isCulto && sec('👥 Equipe', fld('Membros', <PessoaMultiSelect values={form.equipe.filter(Boolean)} onChange={v => upd('equipe', v)} people={activePeople} placeholder="Adicionar membro..." />))}
+            {!isCulto && sec('👥 Equipe', fld('Membros', <PessoaMultiSelect values={form.equipe.filter(Boolean)} onChange={v => upd('equipe', v)} people={activePeople} placeholder="Adicionar membro..." unavailableIds={unavailableIds} />))}
 
             {fld('Observação', ta(form.observacao, v => upd('observacao', v)))}
 

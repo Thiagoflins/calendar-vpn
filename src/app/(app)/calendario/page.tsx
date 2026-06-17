@@ -113,7 +113,7 @@ function CalendarioContent() {
   };
 
   return (
-    <AppShell onAddEvent={() => openAdd()}>
+    <AppShell onAddEvent={() => openAdd()} hideRightSidebar>
       <div style={{ padding: '12px 20px 24px' }}>
         {/* Filter + Export */}
         <div style={{ display: 'flex', gap: 6, marginBottom: 14, alignItems: 'center' }}>

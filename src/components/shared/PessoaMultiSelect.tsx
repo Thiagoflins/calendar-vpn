@@ -12,9 +12,10 @@ type Props = {
   people: Person[];
   mode?: 'nome' | 'id';
   placeholder?: string;
+  unavailableIds?: string[];
 };
 
-export function PessoaMultiSelect({ values, onChange, people, mode = 'nome', placeholder = 'Adicionar pessoa...' }: Props) {
+export function PessoaMultiSelect({ values, onChange, people, mode = 'nome', placeholder = 'Adicionar pessoa...', unavailableIds = [] }: Props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const ref = useRef<HTMLDivElement>(null);
@@ -126,14 +127,17 @@ export function PessoaMultiSelect({ values, onChange, people, mode = 'nome', pla
                   )}
                   {filtered.map((p, i) => {
                     const isSel = values.includes(getKey(p));
+                    const isUnavailable = unavailableIds.includes(p.id);
                     return (
                       <div
                         key={p.id}
-                        onMouseDown={e => { e.preventDefault(); toggle(p); }}
+                        onMouseDown={e => { e.preventDefault(); if (!isUnavailable) toggle(p); }}
                         style={{
                           display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px',
                           background: isSel ? '#EEF2FF' : i % 2 === 0 ? '#fff' : '#FAFBFC',
-                          cursor: 'pointer', borderBottom: i < filtered.length - 1 ? '1px solid #F3F4F6' : 'none',
+                          cursor: isUnavailable ? 'not-allowed' : 'pointer',
+                          borderBottom: i < filtered.length - 1 ? '1px solid #F3F4F6' : 'none',
+                          opacity: isUnavailable ? 0.5 : 1,
                         }}
                       >
                         <div style={{ width: 20, height: 20, borderRadius: 4, border: `2px solid ${isSel ? '#2E5AAC' : '#D1D5DB'}`, background: isSel ? '#2E5AAC' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -144,7 +148,10 @@ export function PessoaMultiSelect({ values, onChange, people, mode = 'nome', pla
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 14, fontWeight: isSel ? 600 : 400, color: '#101828' }}>{p.nome}</div>
-                          {p.funcoes.length > 0 && <div style={{ fontSize: 11, color: '#9AA3B5', marginTop: 1 }}>{p.funcoes.slice(0, 3).join(' · ')}</div>}
+                          {isUnavailable
+                            ? <div style={{ fontSize: 11, color: '#F59E0B', marginTop: 1 }}>⚠ Indisponível nesta data</div>
+                            : p.funcoes.length > 0 && <div style={{ fontSize: 11, color: '#9AA3B5', marginTop: 1 }}>{p.funcoes.slice(0, 3).join(' · ')}</div>
+                          }
                         </div>
                       </div>
                     );
