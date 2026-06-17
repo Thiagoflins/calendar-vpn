@@ -16,7 +16,7 @@ type Props = {
 };
 
 export function CalendarMonthView({ date, events, onDayClick, onEventClick }: Props) {
-  const today = fd(new Date(2026, 5, 15));
+  const today = fd(new Date());
   const y = date.getFullYear(), m = date.getMonth();
   const first = new Date(y, m, 1);
   let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;

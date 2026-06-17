@@ -22,7 +22,7 @@ function weekEnd(d: Date) {
 
 export default function HomePage() {
   const router = useRouter();
-  const today = new Date(2026, 5, 15);
+  const today = new Date();
   const todayStr = fd(today);
 
   const { data: events = [] } = useEvents();

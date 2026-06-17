@@ -31,9 +31,9 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const today = new Date(2026, 5, 15);
+  const today = new Date();
   const todayStr = fd(today);
-  const [miniDate, setMiniDate] = useState(new Date(2026, 5, 1));
+  const [miniDate, setMiniDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const { data: events = [] } = useEvents();
   const { data: people = [] } = usePeople();
   const { data: teams = [] } = useTeams();

@@ -32,7 +32,7 @@ type Props = {
 };
 
 export function DashboardWeekCalendar({ date, events, onEventClick, onDayClick }: Props) {
-  const today = fd(new Date(2026, 5, 15));
+  const today = fd(new Date());
   const ws = weekStart(date);
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(ws);

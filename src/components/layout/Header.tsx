@@ -47,7 +47,7 @@ export function Header({ onAddEvent, onAddPerson, onAddTeam }: HeaderProps) {
 
   const viewParam = params.get('view') ?? 'mes';
   const dateParam = params.get('date');
-  const currentDate = dateParam ? new Date(dateParam + 'T12:00:00') : new Date(2026, 5, 15);
+  const currentDate = dateParam ? new Date(dateParam + 'T12:00:00') : new Date();
 
   const periodLabel = () => {
     const y = currentDate.getFullYear(), m = currentDate.getMonth();
@@ -129,7 +129,7 @@ export function Header({ onAddEvent, onAddPerson, onAddTeam }: HeaderProps) {
       {page === 'calendario' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <button onClick={() => navDate(-1)} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-          <button onClick={() => setParam('date', fd(new Date(2026, 5, 15)))} style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 13, fontWeight: 400 }}>Hoje</button>
+          <button onClick={() => setParam('date', fd(new Date()))} style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 13, fontWeight: 400 }}>Hoje</button>
           <button onClick={() => navDate(1)} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
         </div>
       )}

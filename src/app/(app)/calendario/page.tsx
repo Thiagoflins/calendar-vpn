@@ -22,7 +22,7 @@ function CalendarioContent() {
   const params = useSearchParams();
   const view = (params.get('view') ?? 'mes') as 'mes' | 'semana' | 'dia';
   const dateParam = params.get('date');
-  const date = dateParam ? new Date(dateParam + 'T12:00:00') : new Date(2026, 5, 15);
+  const date = dateParam ? new Date(dateParam + 'T12:00:00') : new Date();
   const typeFilter = params.get('tf') ?? 'todos';
 
   const { data: allEvents = [] } = useEvents();
