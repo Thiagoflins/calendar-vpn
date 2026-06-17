@@ -4,6 +4,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'CAVN',
   description: 'Sistema de gestão de calendário e equipes',
+  icons: { icon: '/logo-azul.png', apple: '/logo-azul.png' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
