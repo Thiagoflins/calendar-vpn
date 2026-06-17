@@ -153,9 +153,31 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '12px 22px', borderTop: '1px solid #E5E7EB', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button onClick={onDelete} style={{ padding: '7px 14px', background: '#FBEAF0', color: '#993556', border: 'none', fontSize: 13, fontWeight: 400, borderRadius: 6, cursor: 'pointer' }}>🗑️ Excluir</button>
-          <button onClick={onEdit} style={{ padding: '7px 18px', background: '#2E5AAC', color: '#fff', border: 'none', fontSize: 13, fontWeight: 500, borderRadius: 6, cursor: 'pointer' }}>✏️ Editar</button>
+        <div style={{ padding: '12px 22px', borderTop: '1px solid #F0EFED', display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
+          <button
+            onClick={onDelete}
+            title="Excluir evento"
+            style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 7, border: 'none', background: 'transparent', color: '#FBBFBF', cursor: 'pointer', transition: 'background 0.13s, color 0.13s' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEF2F2'; (e.currentTarget as HTMLButtonElement).style.color = '#DC2626'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#FBBFBF'; }}
+          >
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M3 6H5H21M8 6V4C8 3.448 8.448 3 9 3H15C15.552 3 16 3.448 16 4V6M19 6L18.117 19.117C18.052 20.148 17.192 21 16.158 21H7.842C6.808 21 5.948 20.148 5.883 19.117L5 6"
+                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <button
+            onClick={onEdit}
+            style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 18px', borderRadius: 7, border: 'none', background: '#1C3568', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, transition: 'background 0.13s' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#162A53'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#1C3568'; }}
+          >
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24">
+              <path d="M11 4H4C3.448 4 3 4.448 3 5V20C3 20.552 3.448 21 4 21H19C19.552 21 20 20.552 20 20V13M18.586 2.586C19.367 1.805 20.633 1.805 21.414 2.586C22.195 3.367 22.195 4.633 21.414 5.414L12 14.828L8 16L9.172 12L18.586 2.586Z"
+                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Editar
+          </button>
         </div>
       </div>
     </div>

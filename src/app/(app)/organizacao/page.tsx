@@ -14,6 +14,25 @@ import { getColor, COLORS } from '@/lib/colors';
 const PAGE_SIZE = 8;
 type TabId = 'equipes' | 'funcoes' | 'tipos';
 
+const CSS = `
+  .org-row {
+    display: grid; align-items: center; transition: background 0.12s;
+  }
+  .org-row:hover { background: #FAFAF8; }
+
+  .org-act {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 7px; border: none; background: transparent;
+    cursor: pointer; transition: background 0.13s, color 0.13s;
+    flex-shrink: 0;
+  }
+  .org-act-edit { color: #C4BFB8; }
+  .org-act-edit:hover { background: #F0EFEC; color: #6B6860; }
+  .org-act-deact { color: #FBBFBF; }
+  .org-act-deact:hover { background: #FEF2F2; color: #DC2626; }
+`;
+
 function initials(name: string) {
   return name.trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase();
 }
@@ -36,42 +55,23 @@ function AvatarStack({ ids, people }: { ids: string[]; people: ReturnType<typeof
   );
 }
 
-function RowMenu({ id, openId, onToggle, children }: { id: string; openId: string | null; onToggle: (id: string | null) => void; children: React.ReactNode }) {
-  return (
-    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-      <button
-        onClick={e => { e.stopPropagation(); onToggle(openId === id ? null : id); }}
-        style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: openId === id ? '#F3F4F6' : 'transparent', color: '#C4C9D4', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.1s' }}
-        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#F3F4F6'; (e.currentTarget as HTMLButtonElement).style.color = '#6B7280'; }}
-        onMouseLeave={e => { if (openId !== id) { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#C4C9D4'; } }}
-      >
-        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
-      </button>
-      {openId === id && (
-        <div style={{ position: 'absolute', top: 32, right: 0, zIndex: 50, background: '#fff', borderRadius: 10, boxShadow: '0 4px 20px rgba(16,24,40,0.10)', border: '1px solid #E5E7EB', minWidth: 148, overflow: 'hidden' }}>
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MenuItem({ onClick, color = '#374151', icon, label }: { onClick: () => void; color?: string; icon: React.ReactNode; label: string }) {
-  return (
-    <button onClick={onClick} style={{ width: '100%', padding: '9px 13px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 400, color, display: 'flex', alignItems: 'center', gap: 8 }}>
-      {icon}{label}
-    </button>
-  );
-}
-
 function EditIcon() {
-  return <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M11 4H4C3.448 4 3 4.448 3 5V20C3 20.552 3.448 21 4 21H19C19.552 21 20 20.552 20 20V13M18.586 2.586C19.367 1.805 20.633 1.805 21.414 2.586C22.195 3.367 22.195 4.633 21.414 5.414L12 14.828L8 16L9.172 12L18.586 2.586Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-}
-function TrashIcon() {
-  return <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M3 6H5H21M8 6V4C8 3.448 8.448 3 9 3H15C15.552 3 16 3.448 16 4V6M19 6L18.106 19.106C18.047 19.878 17.405 20.478 16.631 20.478H7.369C6.595 20.478 5.953 19.878 5.894 19.106L5 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+  return (
+    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+      <path d="M11 4H4C3.448 4 3 4.448 3 5V20C3 20.552 3.448 21 4 21H19C19.552 21 20 20.552 20 20V13M18.586 2.586C19.367 1.805 20.633 1.805 21.414 2.586C22.195 3.367 22.195 4.633 21.414 5.414L12 14.828L8 16L9.172 12L18.586 2.586Z"
+        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
 }
 
-function Divider() { return <div style={{ height: 1, background: '#F5F5F5' }} />; }
+function TrashIcon() {
+  return (
+    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+      <path d="M3 6H5H21M8 6V4C8 3.448 8.448 3 9 3H15C15.552 3 16 3.448 16 4V6M19 6L18.117 19.117C18.052 20.148 17.192 21 16.158 21H7.842C6.808 21 5.948 20.148 5.883 19.117L5 6"
+        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
 
 function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
   if (total <= 1) return null;
@@ -120,10 +120,6 @@ export default function OrganizacaoPage() {
   const [showTeamTypeForm, setShowTeamTypeForm] = useState(false);
   const [editTeamType, setEditTeamType] = useState<{ id: string; nome: string } | null>(null);
 
-  const [teamMenu, setTeamMenu] = useState<string | null>(null);
-  const [funcaoMenu, setFuncaoMenu] = useState<string | null>(null);
-  const [teamTypeMenu, setTeamTypeMenu] = useState<string | null>(null);
-
   const [teamSearch, setTeamSearch] = useState('');
   const [teamPage, setTeamPage] = useState(1);
   const [funcaoSearch, setFuncaoSearch] = useState('');
@@ -149,16 +145,14 @@ export default function OrganizacaoPage() {
     else await createFuncao.mutateAsync(nome);
     setShowFuncaoForm(false); setEditFuncao(null);
   };
-  const handleDeleteFuncao = async (id: string) => { if (!confirm('Excluir esta função?')) return; await removeFuncao.mutateAsync(id); setFuncaoMenu(null); };
+  const handleDeleteFuncao = async (id: string) => { if (!confirm('Excluir esta função?')) return; await removeFuncao.mutateAsync(id); };
 
   const handleSaveTeamType = async (nome: string) => {
     if (editTeamType) await updateTeamType.mutateAsync({ id: editTeamType.id, nome });
     else await createTeamType.mutateAsync(nome);
     setShowTeamTypeForm(false); setEditTeamType(null);
   };
-  const handleDeleteTeamType = async (id: string) => { if (!confirm('Excluir este tipo?')) return; await removeTeamType.mutateAsync(id); setTeamTypeMenu(null); };
-
-  const closeAllMenus = () => { setTeamMenu(null); setFuncaoMenu(null); setTeamTypeMenu(null); };
+  const handleDeleteTeamType = async (id: string) => { if (!confirm('Excluir este tipo?')) return; await removeTeamType.mutateAsync(id); };
 
   const TABS: { id: TabId; label: string; count: number }[] = [
     { id: 'equipes', label: 'Equipes', count: teams.length },
@@ -176,20 +170,19 @@ export default function OrganizacaoPage() {
 
   return (
     <AppShell onAddTeam={() => { setEditTeam(null); setShowTeamForm(true); }}>
-      {(teamMenu || funcaoMenu || teamTypeMenu) && (
-        <div onClick={closeAllMenus} style={{ position: 'fixed', inset: 0, zIndex: 49 }} />
-      )}
+      <style>{CSS}</style>
 
       <div style={{ padding: '28px 28px 80px' }}>
 
         {/* ── Stat strip ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
           {[
-            { label: 'Equipes', value: teams.length, color: '#2E5AAC', bg: '#EEF2FF', icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M17 21V19C17 16.791 15.209 15 13 15H5C2.791 15 1 16.791 1 19V21M23 21V19C23 17.133 21.742 15.55 20 15.12M16 3.13C17.742 3.55 19 5.133 19 7C19 8.867 17.742 10.45 16 10.87M9 11C11.209 11 13 9.209 13 7C13 4.791 11.209 3 9 3C6.791 3 5 4.791 5 7C5 9.209 6.791 11 9 11Z" stroke="#2E5AAC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-            { label: 'Funções', value: funcoes.length, color: '#6366F1', bg: '#EEF2FF', icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M9 6H20M9 12H20M9 18H20M5 6V6.01M5 12V12.01M5 18V18.01" stroke="#6366F1" strokeWidth="1.7" strokeLinecap="round"/></svg> },
-            { label: 'Tipos', value: teamTypes.length, color: '#0891B2', bg: '#ECFEFF', icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M7 7H17M7 12H14M7 17H11M4 4H20V20H4V4Z" stroke="#0891B2" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+            { label: 'Equipes', value: teams.length, color: '#2E5AAC', bg: '#EEF2FF', tab: 'equipes' as TabId, icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M17 21V19C17 16.791 15.209 15 13 15H5C2.791 15 1 16.791 1 19V21M23 21V19C23 17.133 21.742 15.55 20 15.12M16 3.13C17.742 3.55 19 5.133 19 7C19 8.867 17.742 10.45 16 10.87M9 11C11.209 11 13 9.209 13 7C13 4.791 11.209 3 9 3C6.791 3 5 4.791 5 7C5 9.209 6.791 11 9 11Z" stroke="#2E5AAC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+            { label: 'Funções', value: funcoes.length, color: '#6366F1', bg: '#EEF2FF', tab: 'funcoes' as TabId, icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M9 6H20M9 12H20M9 18H20M5 6V6.01M5 12V12.01M5 18V18.01" stroke="#6366F1" strokeWidth="1.7" strokeLinecap="round"/></svg> },
+            { label: 'Tipos', value: teamTypes.length, color: '#0891B2', bg: '#ECFEFF', tab: 'tipos' as TabId, icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M7 7H17M7 12H14M7 17H11M4 4H20V20H4V4Z" stroke="#0891B2" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> },
           ].map(s => (
-            <div key={s.label} onClick={() => setActiveTab(s.label === 'Equipes' ? 'equipes' : s.label === 'Funções' ? 'funcoes' : 'tipos')} style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s' }}
+            <div key={s.label} onClick={() => setActiveTab(s.tab)}
+              style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = s.color; (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 3px ${s.color}15`; }}
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; }}
             >
@@ -206,17 +199,7 @@ export default function OrganizacaoPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <div style={{ display: 'flex', gap: 2, padding: 4, background: '#F3F4F6', borderRadius: 10 }}>
             {TABS.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.id ? 600 : 400,
-                  background: activeTab === tab.id ? '#fff' : 'transparent',
-                  color: activeTab === tab.id ? '#101828' : '#9AA3B5',
-                  boxShadow: activeTab === tab.id ? '0 1px 3px rgba(16,24,40,0.08)' : 'none',
-                  transition: 'all 0.15s',
-                }}
-              >
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.id ? 600 : 400, background: activeTab === tab.id ? '#fff' : 'transparent', color: activeTab === tab.id ? '#101828' : '#9AA3B5', boxShadow: activeTab === tab.id ? '0 1px 3px rgba(16,24,40,0.08)' : 'none', transition: 'all 0.15s' }}>
                 {tab.label}
                 <span style={{ fontSize: 11, fontWeight: 600, padding: '1px 6px', borderRadius: 99, background: activeTab === tab.id ? '#EEF2FF' : '#E5E7EB', color: activeTab === tab.id ? '#2E5AAC' : '#9AA3B5', transition: 'all 0.15s' }}>{tab.count}</span>
               </button>
@@ -224,7 +207,6 @@ export default function OrganizacaoPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {/* Search — inline with add button */}
             {activeTab !== 'tipos' && (
               <div style={{ position: 'relative' }}>
                 <svg style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} width="13" height="13" fill="none" viewBox="0 0 24 24">
@@ -234,14 +216,11 @@ export default function OrganizacaoPage() {
                   value={activeTab === 'equipes' ? teamSearch : funcaoSearch}
                   onChange={e => { if (activeTab === 'equipes') { setTeamSearch(e.target.value); setTeamPage(1); } else { setFuncaoSearch(e.target.value); setFuncaoPage(1); } }}
                   placeholder={activeTab === 'equipes' ? 'Buscar equipe...' : 'Buscar função...'}
-                  style={{ height: 36, padding: '0 12px 0 30px', borderRadius: 8, border: '1px solid #E5E7EB', fontSize: 13, outline: 'none', background: '#fff', boxSizing: 'border-box', color: '#374151', width: 200 }}
+                  style={{ height: 36, padding: '0 12px 0 30px', borderRadius: 8, border: '1px solid #E5E7EB', fontSize: 13, outline: 'none', background: '#fff', boxSizing: 'border-box', color: '#374151', width: 200, fontFamily: "'Outfit', sans-serif" }}
                 />
               </div>
             )}
-            <button
-              onClick={addAction}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36 }}
-            >
+            <button onClick={addAction} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36 }}>
               <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> {addLabel}
             </button>
           </div>
@@ -250,9 +229,9 @@ export default function OrganizacaoPage() {
         {/* ── Tab content ── */}
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'visible', boxShadow: '0 1px 2px rgba(16,24,40,0.04)' }}>
 
-          {/* EQUIPES tab */}
+          {/* EQUIPES */}
           {activeTab === 'equipes' && (<>
-            <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 40px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 72px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
               {['Equipe', 'Líder', 'Membros', 'Cor', ''].map((h, i) => (
                 <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
               ))}
@@ -267,10 +246,8 @@ export default function OrganizacaoPage() {
               const memCount = (team.membroIds ?? []).length;
               const isLast = i === pagedTeams.length - 1;
               return (
-                <div key={team.id}
-                  style={{ display: 'grid', gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 40px', padding: '11px 20px', borderBottom: isLast && teamTotalPages <= 1 ? 'none' : '1px solid #F5F5F5', alignItems: 'center', transition: 'background 0.1s' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = '#FAFAFA'}
-                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = ''}
+                <div key={team.id} className="org-row"
+                  style={{ gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 72px', padding: '11px 20px', borderBottom: isLast && teamTotalPages <= 1 ? 'none' : '1px solid #F5F5F5' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 34, height: 34, borderRadius: 8, background: cl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -297,20 +274,19 @@ export default function OrganizacaoPage() {
                   <div style={{ display: 'flex', gap: 3 }}>
                     {COLORS.map(cor => { const c = getColor(cor); return <div key={cor} style={{ width: 10, height: 10, borderRadius: '50%', background: c.dot, opacity: team.cor === cor ? 1 : 0.18 }} />; })}
                   </div>
-                  <RowMenu id={team.id} openId={teamMenu} onToggle={id => { setTeamMenu(id); setFuncaoMenu(null); setTeamTypeMenu(null); }}>
-                    <MenuItem onClick={() => { setEditTeam(team); setShowTeamForm(true); setTeamMenu(null); }} icon={<EditIcon />} label="Editar" />
-                    <Divider />
-                    <MenuItem onClick={() => { handleDeleteTeam(team.id); setTeamMenu(null); }} icon={<TrashIcon />} label="Excluir" color="#EF4444" />
-                  </RowMenu>
+                  <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                    <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditTeam(team); setShowTeamForm(true); }}><EditIcon /></button>
+                    <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteTeam(team.id)}><TrashIcon /></button>
+                  </div>
                 </div>
               );
             })}
             <Pagination page={teamPage} total={teamTotalPages} onChange={p => setTeamPage(p)} />
           </>)}
 
-          {/* FUNÇÕES tab */}
+          {/* FUNÇÕES */}
           {activeTab === 'funcoes' && (<>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px 40px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px 72px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
               {['Função', 'Membros', ''].map((h, i) => (
                 <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
               ))}
@@ -323,10 +299,8 @@ export default function OrganizacaoPage() {
               const peopleWithFn = people.filter(p => p.funcoes.includes(fn.nome));
               const isLast = i === pagedFuncoes.length - 1;
               return (
-                <div key={fn.id}
-                  style={{ display: 'grid', gridTemplateColumns: '1fr 200px 40px', padding: '11px 20px', borderBottom: isLast && funcaoTotalPages <= 1 ? 'none' : '1px solid #F5F5F5', alignItems: 'center', transition: 'background 0.1s' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = '#FAFAFA'}
-                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = ''}
+                <div key={fn.id} className="org-row"
+                  style={{ gridTemplateColumns: '1fr 200px 72px', padding: '11px 20px', borderBottom: isLast && funcaoTotalPages <= 1 ? 'none' : '1px solid #F5F5F5' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -340,20 +314,19 @@ export default function OrganizacaoPage() {
                       <span style={{ fontSize: 12, color: '#9AA3B5' }}>{peopleWithFn.length} membro{peopleWithFn.length !== 1 ? 's' : ''}</span>
                     </>) : <span style={{ fontSize: 13, color: '#C4C9D4' }}>—</span>}
                   </div>
-                  <RowMenu id={fn.id} openId={funcaoMenu} onToggle={id => { setFuncaoMenu(id); setTeamMenu(null); setTeamTypeMenu(null); }}>
-                    <MenuItem onClick={() => { setEditFuncao(fn); setShowFuncaoForm(true); setFuncaoMenu(null); }} icon={<EditIcon />} label="Editar" />
-                    <Divider />
-                    <MenuItem onClick={() => handleDeleteFuncao(fn.id)} icon={<TrashIcon />} label="Excluir" color="#EF4444" />
-                  </RowMenu>
+                  <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                    <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditFuncao(fn); setShowFuncaoForm(true); }}><EditIcon /></button>
+                    <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteFuncao(fn.id)}><TrashIcon /></button>
+                  </div>
                 </div>
               );
             })}
             <Pagination page={funcaoPage} total={funcaoTotalPages} onChange={p => setFuncaoPage(p)} />
           </>)}
 
-          {/* TIPOS tab */}
+          {/* TIPOS */}
           {activeTab === 'tipos' && (<>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 160px 40px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 160px 72px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
               {['Tipo de Equipe', 'Equipes', ''].map((h, i) => (
                 <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
               ))}
@@ -364,10 +337,8 @@ export default function OrganizacaoPage() {
               const equipeCount = teams.filter(t => t.tipo === tt.nome).length;
               const isLast = i === teamTypes.length - 1;
               return (
-                <div key={tt.id}
-                  style={{ display: 'grid', gridTemplateColumns: '1fr 160px 40px', padding: '11px 20px', borderBottom: isLast ? 'none' : '1px solid #F5F5F5', alignItems: 'center', transition: 'background 0.1s' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = '#FAFAFA'}
-                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = ''}
+                <div key={tt.id} className="org-row"
+                  style={{ gridTemplateColumns: '1fr 160px 72px', padding: '11px 20px', borderBottom: isLast ? 'none' : '1px solid #F5F5F5' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 8, background: '#ECFEFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -378,11 +349,10 @@ export default function OrganizacaoPage() {
                   <div style={{ fontSize: 13, color: equipeCount > 0 ? '#374151' : '#C4C9D4' }}>
                     {equipeCount > 0 ? `${equipeCount} equipe${equipeCount !== 1 ? 's' : ''}` : '—'}
                   </div>
-                  <RowMenu id={tt.id} openId={teamTypeMenu} onToggle={id => { setTeamTypeMenu(id); setTeamMenu(null); setFuncaoMenu(null); }}>
-                    <MenuItem onClick={() => { setEditTeamType(tt); setShowTeamTypeForm(true); setTeamTypeMenu(null); }} icon={<EditIcon />} label="Editar" />
-                    <Divider />
-                    <MenuItem onClick={() => handleDeleteTeamType(tt.id)} icon={<TrashIcon />} label="Excluir" color="#EF4444" />
-                  </RowMenu>
+                  <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                    <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditTeamType(tt); setShowTeamTypeForm(true); }}><EditIcon /></button>
+                    <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteTeamType(tt.id)}><TrashIcon /></button>
+                  </div>
                 </div>
               );
             })}

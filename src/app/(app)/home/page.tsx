@@ -147,7 +147,12 @@ export default function HomePage() {
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 12, fontWeight: 500, color: '#101828', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.nome}</div>
-                      <div style={{ fontSize: 11, color: '#9AA3B5', marginTop: 1 }}>{ev.hora}{ev.pastor ? ` · ${ev.pastor.split(' ').slice(-1)[0]}` : ''}</div>
+                      <div style={{ fontSize: 11, color: '#9AA3B5', marginTop: 1 }}>{ev.hora.slice(0, 5)}</div>
+                      {(ev.pastor || ev.responsavel) && (
+                        <div style={{ fontSize: 11, color: '#B0B7C3', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {ev.pastor || ev.responsavel}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
