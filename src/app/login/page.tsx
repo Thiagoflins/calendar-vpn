@@ -149,26 +149,21 @@ export default function LoginPage() {
           <div style={{ position: 'relative', zIndex: 1 }}>
             <h2 style={{
               fontFamily: "'Outfit', sans-serif",
-              fontSize: 24, fontWeight: 350,
-              color: 'rgb(255, 255, 255)', margin: '0 0 12px',
-              lineHeight: 1.5, letterSpacing: '0.01em',
+              fontSize: 42, fontWeight: 800,
+              color: '#ffffff', margin: '0 0 12px',
+              lineHeight: 1.0, letterSpacing: '-0.02em',
+              textTransform: 'uppercase',
             }}>
-              Habilitar para{' '}
-              <span style={{
-                display: 'block',
-                fontSize: 34, fontWeight: 700,
-                color: '#2d62cd',
-                letterSpacing: '-0.01em',
-                lineHeight: 1.2,
-              }}>
-                O SENHOR
-              </span>
-              um povo preparado.
+              HABILITAR<br />
+              PARA O<br />
+              <span style={{ color: '#2d62cd' }}>SENHOR</span><br />
+              UM POVO<br />
+              PREPARADO.
             </h2>
             <p style={{
-              fontSize: 11, color: 'rgb(255, 255, 255)',
+              fontSize: 11, color: 'rgba(255,255,255,0.45)',
               margin: 0, letterSpacing: '0.18em',
-              textTransform: 'uppercase', fontWeight: 450,
+              textTransform: 'uppercase', fontWeight: 500,
             }}>
               Lucas 1:17
             </p>
