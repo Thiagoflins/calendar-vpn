@@ -117,7 +117,7 @@ function CalendarioContent() {
       <div style={{ padding: '12px 20px 24px' }}>
         {/* Filter + Export */}
         <div style={{ display: 'flex', gap: 6, marginBottom: 14, alignItems: 'center' }}>
-          {[{ v: 'todos', l: 'Todos' }, { v: 'culto', l: '⛪ Cultos' }, { v: 'atividade', l: '📅 Atividades' }].map(f => (
+          {[{ v: 'todos', l: 'Todos' }, { v: 'culto', l: 'Cultos' }, { v: 'atividade', l: 'Atividades' }].map(f => (
             <button key={f.v} onClick={() => setTf(f.v)} style={{ padding: '5px 14px', borderRadius: 6, border: '1px solid', borderColor: typeFilter === f.v ? '#2E5AAC' : '#E5E7EB', background: typeFilter === f.v ? '#E6F1FB' : '#fff', color: typeFilter === f.v ? '#2E5AAC' : '#6B7280', cursor: 'pointer', fontSize: 13, fontWeight: typeFilter === f.v ? 500 : 400 }}>{f.l}</button>
           ))}
           <div style={{ flex: 1 }} />
