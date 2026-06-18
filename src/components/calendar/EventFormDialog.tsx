@@ -215,7 +215,7 @@ export function EventFormDialog({ eventType, editEvent, defaultDate, onClose, on
     </div>
   );
 
-  const EquipeField = ({ field, label }: { field: 'adoracaoEquipe' | 'orgEquipe' | 'equipe'; label: string }) => (
+  const EquipeField = ({ field, label }: { field: 'adoracaoEquipe' | 'equipe'; label: string }) => (
     <div style={{ marginBottom: 8 }}>
       <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 8 }}>{label}</div>
       {form[field].map((v, i) => (
