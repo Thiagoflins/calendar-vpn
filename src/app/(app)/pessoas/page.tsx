@@ -54,7 +54,8 @@ const CSS = `
     50%       { opacity: 0.4; }
   }
 
-  .vpn-page { animation: vpn-fadeUp 0.35s cubic-bezier(.22,.68,0,1.2) both; }
+  .vpn-page { animation: vpn-fadeUp 0.35s cubic-bezier(.22,.68,0,1.2) both; padding: 20px 24px; }
+  @media (max-width: 767px) { .vpn-page { padding: 12px 12px; } }
 
   .vpn-row {
     display: grid;
@@ -134,6 +135,18 @@ const CSS = `
   .vpn-active-dot {
     animation: vpn-pulse 2.4s ease-in-out infinite;
   }
+
+  @media (max-width: 767px) {
+    .vpn-row {
+      grid-template-columns: 1fr auto 72px;
+      padding: 0 14px;
+      height: 58px;
+    }
+    .vpn-col-email { display: none; }
+    .vpn-col-funcao { display: none; }
+    .vpn-stat { padding: 14px 16px; }
+    .vpn-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
 `;
 
 export default function PessoasPage() {
@@ -202,11 +215,11 @@ export default function PessoasPage() {
 
       <div
         className="vpn-page"
-        style={{ padding: '36px 36px 80px', background: '#F5F4F1', minHeight: '100%' }}
+        style={{ background: '#F5F4F1', minHeight: '100%' }}
       >
 
         {/* ── Stats ── */}
-        <div style={{
+        <div className="vpn-stats-grid" style={{
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
           background: '#FFFFFF', borderRadius: 14,
           border: '1px solid #ECEAE6',
@@ -341,12 +354,18 @@ export default function PessoasPage() {
             borderBottom: '1px solid #ECEAE6',
             background: '#FAFAF8',
           }}>
-            {['Nome', 'Funções', 'Status', 'Cadastro', ''].map((h, i) => (
-              <div key={i} style={{
+            {[
+              { label: 'Nome', cls: '' },
+              { label: 'Funções', cls: 'vpn-col-funcao' },
+              { label: 'Status', cls: '' },
+              { label: 'Cadastro', cls: 'vpn-col-email' },
+              { label: '', cls: '' },
+            ].map((h, i) => (
+              <div key={i} className={h.cls} style={{
                 fontSize: 10, fontWeight: 600, color: '#C4BFB8',
                 textTransform: 'uppercase', letterSpacing: '0.1em',
               }}>
-                {h}
+                {h.label}
               </div>
             ))}
           </div>
@@ -412,7 +431,7 @@ export default function PessoasPage() {
                 </div>
 
                 {/* Funções */}
-                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                <div className="vpn-col-funcao" style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
                   {p.funcoes.slice(0, 2).map(fn => (
                     <span key={fn} style={{
                       fontSize: 11, color: '#6B6860',
@@ -449,7 +468,7 @@ export default function PessoasPage() {
                 </div>
 
                 {/* Data */}
-                <div style={{ fontSize: 12, color: '#C4BFB8', fontWeight: 400 }}>
+                <div className="vpn-col-email" style={{ fontSize: 12, color: '#C4BFB8', fontWeight: 400 }}>
                   {fmtDate(p.criadoEm)}
                 </div>
 

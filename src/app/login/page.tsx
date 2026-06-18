@@ -12,6 +12,12 @@ const CSS = `
     to   { opacity: 1; transform: translateY(0); }
   }
   .login-card { animation: loginIn 0.45s cubic-bezier(.22,.68,0,1.2) both; }
+  .login-left-panel { display: flex; }
+  @media (max-width: 600px) {
+    .login-left-panel { display: none !important; }
+    .login-card { min-height: unset !important; border-radius: 16px !important; }
+    .login-right-panel { padding: 36px 28px !important; }
+  }
 
   .login-input {
     width: 100%; height: 44px;
@@ -98,10 +104,10 @@ export default function LoginPage() {
       }}>
 
         {/* ── Painel Esquerdo ── */}
-        <div style={{
+        <div className="login-left-panel" style={{
           width: '42%', flexShrink: 0,
           padding: '36px 40px',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          flexDirection: 'column', justifyContent: 'space-between',
           position: 'relative', overflow: 'hidden',
           background: '#06101E',
           minHeight: 580,
@@ -170,7 +176,7 @@ export default function LoginPage() {
         </div>
 
         {/* ── Painel Direito ── */}
-        <div style={{
+        <div className="login-right-panel" style={{
           flex: 1, background: '#FFFFFF',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '48px 56px',

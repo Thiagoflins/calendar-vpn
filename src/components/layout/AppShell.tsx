@@ -3,6 +3,8 @@ import { Suspense } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { RightSidebar } from './RightSidebar';
+import { MobileNav } from './MobileNav';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 type Props = {
   children: React.ReactNode;
@@ -13,6 +15,22 @@ type Props = {
 };
 
 export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam, hideRightSidebar }: Props) {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden', background: '#F7F9FC', fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+        <Suspense fallback={<div style={{ height: 56, background: '#fff', borderBottom: '1px solid #E5E7EB' }} />}>
+          <Header onAddEvent={onAddEvent} onAddPerson={onAddPerson} onAddTeam={onAddTeam} />
+        </Suspense>
+        <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+          {children}
+        </main>
+        <MobileNav onAddEvent={onAddEvent} />
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F7F9FC', color: '#101828', fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
       <Suspense fallback={null}>
