@@ -14,11 +14,6 @@ function weekStart(d: Date) {
   const r = new Date(d); let dw = r.getDay(); dw = dw === 0 ? 6 : dw - 1; r.setDate(r.getDate() - dw); return r;
 }
 
-function evTop(hora: string) {
-  const [h, m] = hora.split(':').map(Number);
-  return (h - START) * H + m;
-}
-
 type Props = {
   date: Date;
   events: CalendarEvent[];
@@ -42,6 +37,7 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
   const END = eventHours.length > 0 ? Math.min(ABS_END, Math.max(...eventHours) + 2) : ABS_END;
 
   const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
+  const evTop = (hora: string) => { const [h, m] = hora.split(':').map(Number); return (h - START) * H + m; };
 
   return (
     <div style={{ background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
