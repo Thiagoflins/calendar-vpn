@@ -138,13 +138,13 @@ const CSS = `
 
   @media (max-width: 767px) {
     .vpn-row {
-      grid-template-columns: 1fr auto 60px;
+      grid-template-columns: 1fr auto 90px;
       padding: 0 14px;
       height: 58px;
     }
     .vpn-col-email { display: none !important; }
     .vpn-col-funcao { display: none !important; }
-    .vpn-table-header { display: none; }
+    .vpn-table-header { display: none !important; }
     .vpn-stat { padding: 14px 16px; }
     .vpn-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
   }
