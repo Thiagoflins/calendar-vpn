@@ -15,8 +15,8 @@ function initials(name: string) {
 
 function fmtDate(iso?: string) {
   if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+  const [y, m, d] = iso.slice(0, 10).split('-');
+  return `${d}/${m}/${y}`;
 }
 
 const AVATAR_PALETTES = [
@@ -112,10 +112,10 @@ const CSS = `
     transition: all 0.13s;
   }
 
-  .vpn-act-edit { color: #C4BFB8; }
-  .vpn-act-edit:hover { background: #F0EFEC; color: #6B6860; }
+  .vpn-act-edit { color: #9AA3B5; }
+  .vpn-act-edit:hover { background: #F0EFEC; color: #374151; }
 
-  .vpn-act-deact { color: #FBBFBF; }
+  .vpn-act-deact { color: #F87171; }
   .vpn-act-deact:hover { background: #FEF2F2; color: #DC2626; }
 
   .vpn-pg-btn {
@@ -468,7 +468,7 @@ export default function PessoasPage() {
                 </div>
 
                 {/* Data */}
-                <div className="vpn-col-email" style={{ fontSize: 12, color: '#C4BFB8', fontWeight: 400 }}>
+                <div className="vpn-col-email" style={{ fontSize: 12, color: '#9AA3B5', fontWeight: 400 }}>
                   {fmtDate(p.criadoEm)}
                 </div>
 
@@ -480,9 +480,9 @@ export default function PessoasPage() {
                         stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
-                  <button className="vpn-act" onClick={() => setIndispPerson(p)} title="Indisponibilidade" style={{ color: '#C4BFB8' }}
+                  <button className="vpn-act" onClick={() => setIndispPerson(p)} title="Indisponibilidade" style={{ color: '#9AA3B5' }}
                     onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FFFBEB'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#C4BFB8'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#9AA3B5'; }}
                   >
                     <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
                       <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4ZM12 11V13M12 16H12.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
