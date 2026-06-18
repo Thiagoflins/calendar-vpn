@@ -3,12 +3,7 @@ import { CalendarEvent } from '@/types';
 import { getColor } from '@/lib/colors';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const H = 64, START = 7, END = 22;
-
-function evTop(hora: string) {
-  const [h, m] = hora.split(':').map(Number);
-  return (h - START) * H + m;
-}
+const H = 64, ABS_START = 7, ABS_END = 22;
 
 type Props = {
   date: Date;
@@ -17,6 +12,15 @@ type Props = {
 };
 
 export function CalendarDayView({ date, events, onEventClick }: Props) {
+  const eventHours = events.map(e => parseInt(e.hora?.split(':')[0] ?? '12'));
+  const START = eventHours.length > 0 ? Math.max(ABS_START, Math.min(...eventHours) - 1) : ABS_START;
+  const END = eventHours.length > 0 ? Math.min(ABS_END, Math.max(...eventHours) + 2) : Math.min(ABS_END, 20);
+
+  function evTop(hora: string) {
+    const [h, m] = hora.split(':').map(Number);
+    return (h - START) * H + m;
+  }
+
   const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
 
   return (
@@ -29,7 +33,7 @@ export function CalendarDayView({ date, events, onEventClick }: Props) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', overflowY: 'auto', maxHeight: 560 }}>
+      <div style={{ display: 'flex', overflowY: 'auto', maxHeight: 'calc(100vh - 280px)' }}>
         <div style={{ width: 60, flexShrink: 0 }}>
           {slots.map(h => (
             <div key={h} style={{ height: H, display: 'flex', alignItems: 'flex-start', paddingTop: 6, paddingRight: 8, justifyContent: 'flex-end' }}>

@@ -1,9 +1,10 @@
 'use client';
 import { CalendarEvent } from '@/types';
 import { getColor } from '@/lib/colors';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const DAYS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-const H = 60, START = 7, END = 22;
+const ABS_START = 7, ABS_END = 22;
 
 function fd(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -25,6 +26,8 @@ type Props = {
 };
 
 export function CalendarWeekView({ date, events, onEventClick }: Props) {
+  const isMobile = useIsMobile();
+  const H = isMobile ? 48 : 60;
   const today = fd(new Date());
   const ws = weekStart(date);
   const days = Array.from({ length: 7 }, (_, i) => {
@@ -32,6 +35,12 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
     const ds = fd(d);
     return { ds, name: DAYS[i], num: d.getDate(), isToday: ds === today, evs: events.filter(e => e.data === ds) };
   });
+
+  const weekEvs = days.flatMap(d => d.evs);
+  const eventHours = weekEvs.map(e => parseInt(e.hora?.split(':')[0] ?? '12'));
+  const START = eventHours.length > 0 ? Math.max(ABS_START, Math.min(...eventHours) - 1) : ABS_START;
+  const END = eventHours.length > 0 ? Math.min(ABS_END, Math.max(...eventHours) + 2) : ABS_END;
+
   const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
 
   return (
@@ -50,12 +59,12 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
       </div>
 
       {/* Time grid */}
-      <div style={{ display: 'flex', overflowY: 'auto', maxHeight: 580 }}>
+      <div style={{ display: 'flex', overflowY: 'auto', maxHeight: isMobile ? '60vh' : 580 }}>
         {/* Time col */}
-        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #E5E7EB' }}>
+        <div style={{ width: isMobile ? 40 : 52, flexShrink: 0, borderRight: '1px solid #E5E7EB' }}>
           {slots.map(h => (
-            <div key={h} style={{ height: H, display: 'flex', alignItems: 'flex-start', paddingTop: 4, paddingRight: 6, justifyContent: 'flex-end' }}>
-              <span style={{ fontSize: 11, color: '#9AA3B5', whiteSpace: 'nowrap' }}>{h}:00</span>
+            <div key={h} style={{ height: H, display: 'flex', alignItems: 'flex-start', paddingTop: 4, paddingRight: isMobile ? 4 : 6, justifyContent: 'flex-end' }}>
+              <span style={{ fontSize: isMobile ? 9 : 11, color: '#9AA3B5', whiteSpace: 'nowrap' }}>{h}:00</span>
             </div>
           ))}
         </div>
