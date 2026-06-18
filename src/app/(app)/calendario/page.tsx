@@ -165,6 +165,7 @@ function CalendarioContent() {
                 date={date}
                 events={events}
                 selectedDay={mobileSelectedDay}
+                forceCompact
                 onDayClick={ds => setMobileSelectedDay(ds)}
                 onEventClick={id => setDetailId(id)}
               />
