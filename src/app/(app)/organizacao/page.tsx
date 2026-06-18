@@ -27,10 +27,28 @@ const CSS = `
     cursor: pointer; transition: background 0.13s, color 0.13s;
     flex-shrink: 0;
   }
-  .org-act-edit { color: #C4BFB8; }
-  .org-act-edit:hover { background: #F0EFEC; color: #6B6860; }
-  .org-act-deact { color: #FBBFBF; }
+  .org-act-edit { color: #9AA3B5; }
+  .org-act-edit:hover { background: #F0EFEC; color: #374151; }
+  .org-act-deact { color: #F87171; }
   .org-act-deact:hover { background: #FEF2F2; color: #DC2626; }
+
+  @media (max-width: 767px) {
+    .org-page { padding: 14px 12px 80px !important; }
+    .org-stats { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; margin-bottom: 14px !important; }
+    .org-stat-card { padding: 10px 12px !important; }
+    .org-stat-icon { width: 30px !important; height: 30px !important; border-radius: 8px !important; }
+    .org-stat-value { font-size: 18px !important; }
+    .org-controls { flex-direction: column !important; gap: 8px !important; align-items: stretch !important; }
+    .org-tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
+    .org-tab-bar button { flex-shrink: 0; white-space: nowrap; padding: 6px 10px !important; }
+    .org-search-row { display: flex; gap: 8px; }
+    .org-search input { flex: 1; width: auto !important; }
+    .org-row-members { display: none !important; }
+    .org-row-cor { display: none !important; }
+    .org-row-lider { display: none !important; }
+    .org-row { grid-template-columns: 1fr 72px !important; }
+    .org-row-equipes { grid-template-columns: 1fr 72px !important; }
+  }
 `;
 
 function initials(name: string) {
@@ -176,23 +194,23 @@ export default function OrganizacaoPage() {
     <AppShell onAddTeam={() => { setEditTeam(null); setShowTeamForm(true); }}>
       <style>{CSS}</style>
 
-      <div style={{ padding: '28px 28px 80px' }}>
+      <div className="org-page" style={{ padding: '28px 28px 80px' }}>
 
         {/* ── Stat strip ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
+        <div className="org-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
           {[
             { label: 'Equipes', value: teams.length, color: '#2E5AAC', bg: '#EEF2FF', tab: 'equipes' as TabId, icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M17 21V19C17 16.791 15.209 15 13 15H5C2.791 15 1 16.791 1 19V21M23 21V19C23 17.133 21.742 15.55 20 15.12M16 3.13C17.742 3.55 19 5.133 19 7C19 8.867 17.742 10.45 16 10.87M9 11C11.209 11 13 9.209 13 7C13 4.791 11.209 3 9 3C6.791 3 5 4.791 5 7C5 9.209 6.791 11 9 11Z" stroke="#2E5AAC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> },
             { label: 'Funções', value: funcoes.length, color: '#6366F1', bg: '#EEF2FF', tab: 'funcoes' as TabId, icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M9 6H20M9 12H20M9 18H20M5 6V6.01M5 12V12.01M5 18V18.01" stroke="#6366F1" strokeWidth="1.7" strokeLinecap="round"/></svg> },
             { label: 'Tipos', value: teamTypes.length, color: '#0891B2', bg: '#ECFEFF', tab: 'tipos' as TabId, icon: <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M7 7H17M7 12H14M7 17H11M4 4H20V20H4V4Z" stroke="#0891B2" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> },
           ].map(s => (
-            <div key={s.label} onClick={() => setActiveTab(s.tab)}
+            <div key={s.label} onClick={() => setActiveTab(s.tab)} className="org-stat-card"
               style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'border-color 0.15s, box-shadow 0.15s' }}
               onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = s.color; (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 3px ${s.color}15`; }}
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; }}
             >
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.icon}</div>
+              <div className="org-stat-icon" style={{ width: 38, height: 38, borderRadius: 10, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.icon}</div>
               <div>
-                <div style={{ fontSize: 22, fontWeight: 700, color: '#101828', lineHeight: 1 }}>{s.value}</div>
+                <div className="org-stat-value" style={{ fontSize: 22, fontWeight: 700, color: '#101828', lineHeight: 1 }}>{s.value}</div>
                 <div style={{ fontSize: 12, color: '#9AA3B5', marginTop: 2 }}>{s.label}</div>
               </div>
             </div>
@@ -200,19 +218,19 @@ export default function OrganizacaoPage() {
         </div>
 
         {/* ── Tab bar + action button ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <div style={{ display: 'flex', gap: 2, padding: 4, background: '#F3F4F6', borderRadius: 10 }}>
+        <div className="org-controls" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 10 }}>
+          <div className="org-tab-bar" style={{ display: 'flex', gap: 2, padding: 4, background: '#F3F4F6', borderRadius: 10 }}>
             {TABS.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.id ? 600 : 400, background: activeTab === tab.id ? '#fff' : 'transparent', color: activeTab === tab.id ? '#101828' : '#9AA3B5', boxShadow: activeTab === tab.id ? '0 1px 3px rgba(16,24,40,0.08)' : 'none', transition: 'all 0.15s' }}>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === tab.id ? 600 : 400, background: activeTab === tab.id ? '#fff' : 'transparent', color: activeTab === tab.id ? '#101828' : '#9AA3B5', boxShadow: activeTab === tab.id ? '0 1px 3px rgba(16,24,40,0.08)' : 'none', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
                 {tab.label}
                 <span style={{ fontSize: 11, fontWeight: 600, padding: '1px 6px', borderRadius: 99, background: activeTab === tab.id ? '#EEF2FF' : '#E5E7EB', color: activeTab === tab.id ? '#2E5AAC' : '#9AA3B5', transition: 'all 0.15s' }}>{tab.count}</span>
               </button>
             ))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="org-search-row" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {activeTab !== 'tipos' && (
-              <div style={{ position: 'relative' }}>
+              <div className="org-search" style={{ position: 'relative' }}>
                 <svg style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} width="13" height="13" fill="none" viewBox="0 0 24 24">
                   <path d="M21 21L16.514 16.506M19 11C19 15.418 15.418 19 11 19C6.582 19 3 15.418 3 11C3 6.582 6.582 3 11 3C15.418 3 19 6.582 19 11Z" stroke="#B0B7C3" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
@@ -236,8 +254,8 @@ export default function OrganizacaoPage() {
           {/* EQUIPES */}
           {activeTab === 'equipes' && (<>
             <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 72px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
-              {['Equipe', 'Líder', 'Membros', 'Cor', ''].map((h, i) => (
-                <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
+              {[{ l: 'Equipe', cls: '' }, { l: 'Líder', cls: 'org-row-lider' }, { l: 'Membros', cls: 'org-row-members' }, { l: 'Cor', cls: 'org-row-cor' }, { l: '', cls: '' }].map((h, i) => (
+                <div key={i} className={h.cls} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h.l}</div>
               ))}
             </div>
             {teams.length === 0 ? (
@@ -257,25 +275,25 @@ export default function OrganizacaoPage() {
                     <div style={{ width: 34, height: 34, borderRadius: 8, background: cl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <div style={{ width: 11, height: 11, borderRadius: '50%', background: cl.dot }} />
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ fontSize: 14, fontWeight: 500, color: '#18181B' }}>{team.nome}</span>
+                        <span style={{ fontSize: 14, fontWeight: 500, color: '#18181B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{team.nome}</span>
                         {team.tipo && <span style={{ fontSize: 10, fontWeight: 600, color: '#2E5AAC', background: '#EEF2FF', padding: '1px 6px', borderRadius: 4, whiteSpace: 'nowrap' }}>{team.tipo}</span>}
                       </div>
-                      {team.descricao && <div style={{ fontSize: 12, color: '#B0B7C3', marginTop: 1, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{team.descricao}</div>}
+                      {team.descricao && <div style={{ fontSize: 12, color: '#B0B7C3', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{team.descricao}</div>}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <div className="org-row-lider" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                     {lider ? (<>
                       <div style={{ width: 24, height: 24, borderRadius: '50%', background: cl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: cl.dot, flexShrink: 0 }}>{initials(lider.nome)}</div>
                       <span style={{ fontSize: 13, color: '#374151' }}>{lider.nome.split(' ')[0]}</span>
                     </>) : <span style={{ fontSize: 13, color: '#C4C9D4' }}>—</span>}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <div className="org-row-members" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                     <AvatarStack ids={team.membroIds ?? []} people={people} />
                     {memCount > 0 ? <span style={{ fontSize: 12, color: '#9AA3B5' }}>{memCount}</span> : <span style={{ fontSize: 13, color: '#C4C9D4' }}>—</span>}
                   </div>
-                  <div style={{ display: 'flex', gap: 3 }}>
+                  <div className="org-row-cor" style={{ display: 'flex', gap: 3 }}>
                     {COLORS.map(cor => { const c = getColor(cor); return <div key={cor} style={{ width: 10, height: 10, borderRadius: '50%', background: c.dot, opacity: team.cor === cor ? 1 : 0.18 }} />; })}
                   </div>
                   <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
@@ -291,8 +309,8 @@ export default function OrganizacaoPage() {
           {/* FUNÇÕES */}
           {activeTab === 'funcoes' && (<>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px 72px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
-              {['Função', 'Membros', ''].map((h, i) => (
-                <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
+              {[{ l: 'Função', cls: '' }, { l: 'Membros', cls: 'org-row-members' }, { l: '', cls: '' }].map((h, i) => (
+                <div key={i} className={h.cls} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h.l}</div>
               ))}
             </div>
             {funcoes.length === 0 ? (
@@ -312,7 +330,7 @@ export default function OrganizacaoPage() {
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 500, color: '#18181B' }}>{fn.nome}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div className="org-row-members" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     {peopleWithFn.length > 0 ? (<>
                       <AvatarStack ids={peopleWithFn.map(p => p.id)} people={people} />
                       <span style={{ fontSize: 12, color: '#9AA3B5' }}>{peopleWithFn.length} membro{peopleWithFn.length !== 1 ? 's' : ''}</span>
@@ -331,8 +349,8 @@ export default function OrganizacaoPage() {
           {/* TIPOS */}
           {activeTab === 'tipos' && (<>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 160px 72px', padding: '10px 20px', borderBottom: '1px solid #E5E7EB', background: '#FAFAFA', borderRadius: '12px 12px 0 0' }}>
-              {['Tipo de Equipe', 'Equipes', ''].map((h, i) => (
-                <div key={i} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
+              {[{ l: 'Tipo de Equipe', cls: '' }, { l: 'Equipes', cls: 'org-row-members' }, { l: '', cls: '' }].map((h, i) => (
+                <div key={i} className={h.cls} style={{ fontSize: 11, fontWeight: 500, color: '#B0B7C3', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h.l}</div>
               ))}
             </div>
             {teamTypes.length === 0 ? (
@@ -350,7 +368,7 @@ export default function OrganizacaoPage() {
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 500, color: '#18181B' }}>{tt.nome}</span>
                   </div>
-                  <div style={{ fontSize: 13, color: equipeCount > 0 ? '#374151' : '#C4C9D4' }}>
+                  <div className="org-row-members" style={{ fontSize: 13, color: equipeCount > 0 ? '#374151' : '#C4C9D4' }}>
                     {equipeCount > 0 ? `${equipeCount} equipe${equipeCount !== 1 ? 's' : ''}` : '—'}
                   </div>
                   <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>

@@ -138,12 +138,13 @@ const CSS = `
 
   @media (max-width: 767px) {
     .vpn-row {
-      grid-template-columns: 1fr auto 72px;
+      grid-template-columns: 1fr auto 60px;
       padding: 0 14px;
       height: 58px;
     }
-    .vpn-col-email { display: none; }
-    .vpn-col-funcao { display: none; }
+    .vpn-col-email { display: none !important; }
+    .vpn-col-funcao { display: none !important; }
+    .vpn-table-header { display: none; }
     .vpn-stat { padding: 14px 16px; }
     .vpn-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
   }
@@ -347,7 +348,7 @@ export default function PessoasPage() {
           overflow: 'hidden',
         }}>
           {/* Header */}
-          <div style={{
+          <div className="vpn-table-header" style={{
             display: 'grid',
             gridTemplateColumns: '2.8fr 1.4fr 108px 114px 72px',
             padding: '11px 28px',
