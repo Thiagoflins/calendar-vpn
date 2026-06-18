@@ -82,13 +82,13 @@ export default function HomePage() {
               {todayEvents.map((ev, i) => (
                 <div key={ev.id} onClick={() => setSelectedEventId(ev.id)}
                   style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: i < todayEvents.length - 1 ? '1px solid #F3F4F6' : 'none', cursor: 'pointer' }}>
-                  <div style={{ width: 3, height: 38, borderRadius: 2, background: TYPE_COLOR[ev.tipo] ?? '#6B7280', flexShrink: 0 }} />
+                  <div style={{ width: 3, height: 38, borderRadius: 2, background: TYPE_COLOR[ev.type] ?? '#6B7280', flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 500, color: '#101828', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.nome}</div>
                     {ev.hora && <div style={{ fontSize: 12, color: '#9AA3B5', marginTop: 2 }}>{ev.hora}</div>}
                   </div>
-                  <span style={{ fontSize: 11, color: TYPE_COLOR[ev.tipo], background: `${TYPE_COLOR[ev.tipo]}18`, padding: '3px 9px', borderRadius: 6, fontWeight: 500, flexShrink: 0 }}>
-                    {ev.tipo === 'culto' ? 'Culto' : 'Atividade'}
+                  <span style={{ fontSize: 11, color: TYPE_COLOR[ev.type], background: `${TYPE_COLOR[ev.type]}18`, padding: '3px 9px', borderRadius: 6, fontWeight: 500, flexShrink: 0 }}>
+                    {ev.type === 'culto' ? 'Culto' : 'Atividade'}
                   </span>
                 </div>
               ))}
@@ -116,7 +116,7 @@ export default function HomePage() {
                         {DAYS_PT[d.getDay()]}{ev.hora ? ` · ${ev.hora}` : ''}
                       </div>
                     </div>
-                    <div style={{ width: 3, height: 28, borderRadius: 2, background: TYPE_COLOR[ev.tipo] ?? '#6B7280', flexShrink: 0 }} />
+                    <div style={{ width: 3, height: 28, borderRadius: 2, background: TYPE_COLOR[ev.type] ?? '#6B7280', flexShrink: 0 }} />
                   </div>
                 );
               })}
