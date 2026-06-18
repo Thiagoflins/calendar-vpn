@@ -39,6 +39,10 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
   const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
   const evTop = (hora: string) => { const [h, m] = hora.split(':').map(Number); return (h - START) * H + m; };
 
+  const now = new Date();
+  const nowTop = (now.getHours() - START) * H + (now.getMinutes() / 60) * H;
+  const showNowLine = now.getHours() >= START && now.getHours() <= END && days.some(d => d.isToday);
+
   return (
     <div style={{ background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
       {/* Day headers */}
@@ -67,10 +71,15 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
 
         {/* Day cols */}
         {days.map(day => (
-          <div key={day.ds} style={{ flex: 1, borderLeft: '1px solid #F3F4F6', position: 'relative', height: (END - START + 1) * H }}>
+          <div key={day.ds} style={{ flex: 1, borderLeft: '1px solid #F3F4F6', position: 'relative', height: (END - START + 1) * H, background: day.isToday ? 'rgba(46,90,172,0.02)' : 'transparent' }}>
             {slots.map(h => (
               <div key={h} style={{ position: 'absolute', top: (h - START) * H, left: 0, right: 0, height: H, borderTop: '1px solid #F3F4F6' }} />
             ))}
+            {day.isToday && showNowLine && (
+              <div style={{ position: 'absolute', top: nowTop, left: 0, right: 0, height: 2, background: '#EF4444', zIndex: 3, pointerEvents: 'none' }}>
+                <div className="vpn-now-dot" style={{ position: 'absolute', left: -5, top: '50%', width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }} />
+              </div>
+            )}
             {day.evs.map(ev => {
               const cl = getColor(ev.cor);
               const participants: string[] = [];

@@ -68,7 +68,10 @@ export function CalendarMonthView({ date, events, onDayClick, onEventClick, sele
                 display: compact ? 'flex' : undefined,
                 flexDirection: compact ? 'column' : undefined,
                 alignItems: compact ? 'center' : undefined,
+                transition: 'background 0.12s',
               }}
+              onMouseEnter={e => { if (cell.inMo && !cell.isSel) (e.currentTarget as HTMLDivElement).style.background = '#F5F8FF'; }}
+              onMouseLeave={e => { if (cell.inMo && !cell.isSel) (e.currentTarget as HTMLDivElement).style.background = '#fff'; }}
             >
               <div style={{ marginBottom: compact ? 3 : 4 }}>
                 <span style={{

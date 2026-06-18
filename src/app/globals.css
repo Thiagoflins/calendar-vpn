@@ -178,3 +178,58 @@
 .vpn-stagger-5 { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) 280ms both; }
 
 button:active:not(:disabled):not(.no-press) { transform: scale(0.97); }
+
+/* ── Global Input Focus ─────────────────────────────── */
+input:not([type="radio"]):not([type="checkbox"]):not([type="color"]):not([type="range"]):not([disabled]),
+textarea:not([disabled]),
+select:not([disabled]) {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:not([type="radio"]):not([type="checkbox"]):not([type="color"]):not([type="range"]):not([disabled]):focus,
+textarea:not([disabled]):focus,
+select:not([disabled]):focus {
+  outline: none !important;
+  border-color: #1C3568 !important;
+  box-shadow: 0 0 0 3px rgba(28,53,104,0.09) !important;
+}
+
+/* ── Button Utilities ───────────────────────────────── */
+.vpn-btn-primary {
+  transition: background 0.13s, transform 0.12s, box-shadow 0.13s;
+}
+.vpn-btn-primary:hover:not(:disabled) {
+  background: #23478A !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(46,90,172,0.28);
+}
+.vpn-btn-primary:active:not(:disabled) { transform: translateY(0) !important; }
+.vpn-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.vpn-btn-outline {
+  transition: background 0.13s, border-color 0.13s, color 0.13s;
+}
+.vpn-btn-outline:hover:not(:disabled) {
+  background: #F5F7FA !important;
+  border-color: #D1D5DB !important;
+}
+
+.vpn-btn-danger {
+  transition: background 0.13s, color 0.13s, border-color 0.13s;
+}
+.vpn-btn-danger:hover:not(:disabled) {
+  background: #FEF2F2 !important;
+  color: #DC2626 !important;
+  border-color: #FCA5A5 !important;
+}
+
+.vpn-btn-ghost {
+  transition: opacity 0.13s, background 0.13s;
+}
+.vpn-btn-ghost:hover { opacity: 0.65; }
+
+/* ── Current time pulse dot ─────────────────────────── */
+@keyframes vpn-now-pulse {
+  0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; }
+  50%       { transform: translateY(-50%) scale(0.7); opacity: 0.6; }
+}
+.vpn-now-dot { animation: vpn-now-pulse 2s ease-in-out infinite; }

@@ -15,8 +15,10 @@ const PAGE_SIZE = 10;
 type TabId = 'equipes' | 'funcoes' | 'tipos';
 
 const CSS = `
+  @keyframes org-row-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
   .org-row {
     display: grid; align-items: center; transition: background 0.12s;
+    animation: org-row-in 0.26s cubic-bezier(.22,.68,0,1.2) both;
   }
   .org-row:hover { background: #FAFAF8; }
 
@@ -31,6 +33,9 @@ const CSS = `
   .org-act-edit:hover { background: #F0EFEC; color: #374151; }
   .org-act-deact { color: #F87171; }
   .org-act-deact:hover { background: #FEF2F2; color: #DC2626; }
+
+  .org-pg-btn { transition: background 0.12s, border-color 0.12s, transform 0.12s; }
+  .org-pg-btn:not(:disabled):hover { background: #F5F7FA !important; border-color: #C4C9D4 !important; }
 
   @media (max-width: 767px) {
     .org-page { padding: 14px 12px 80px !important; }
@@ -95,11 +100,11 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
   if (total <= 1) return null;
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 5, padding: '12px 20px', borderTop: '1px solid #F3F4F6' }}>
-      <button onClick={() => onChange(page - 1)} disabled={page === 1} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E5E7EB', background: page === 1 ? '#F9FAFB' : '#fff', color: page === 1 ? '#C4C9D4' : '#374151', cursor: page === 1 ? 'not-allowed' : 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+      <button onClick={() => onChange(page - 1)} disabled={page === 1} className="org-pg-btn" style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E5E7EB', background: page === 1 ? '#F9FAFB' : '#fff', color: page === 1 ? '#C4C9D4' : '#374151', cursor: page === 1 ? 'not-allowed' : 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
       {Array.from({ length: total }, (_, i) => i + 1).map(p => (
-        <button key={p} onClick={() => onChange(p)} style={{ width: 28, height: 28, borderRadius: 6, border: `1px solid ${p === page ? '#2E5AAC' : '#E5E7EB'}`, background: p === page ? '#2E5AAC' : '#fff', color: p === page ? '#fff' : '#374151', cursor: 'pointer', fontSize: 12, fontWeight: p === page ? 600 : 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p}</button>
+        <button key={p} onClick={() => onChange(p)} className={p !== page ? 'org-pg-btn' : ''} style={{ width: 28, height: 28, borderRadius: 6, border: `1px solid ${p === page ? '#2E5AAC' : '#E5E7EB'}`, background: p === page ? '#2E5AAC' : '#fff', color: p === page ? '#fff' : '#374151', cursor: 'pointer', fontSize: 12, fontWeight: p === page ? 600 : 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p}</button>
       ))}
-      <button onClick={() => onChange(page + 1)} disabled={page === total} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E5E7EB', background: page === total ? '#F9FAFB' : '#fff', color: page === total ? '#C4C9D4' : '#374151', cursor: page === total ? 'not-allowed' : 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+      <button onClick={() => onChange(page + 1)} disabled={page === total} className="org-pg-btn" style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E5E7EB', background: page === total ? '#F9FAFB' : '#fff', color: page === total ? '#C4C9D4' : '#374151', cursor: page === total ? 'not-allowed' : 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
     </div>
   );
 }
@@ -242,7 +247,10 @@ export default function OrganizacaoPage() {
                 />
               </div>
             )}
-            <button onClick={addAction} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36 }}>
+            <button onClick={addAction} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+            >
               <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> {addLabel}
             </button>
           </div>
@@ -269,7 +277,7 @@ export default function OrganizacaoPage() {
               const isLast = i === pagedTeams.length - 1;
               return (
                 <div key={team.id} className="org-row"
-                  style={{ gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 72px', padding: '11px 20px', borderBottom: isLast && teamTotalPages <= 1 ? 'none' : '1px solid #F5F5F5' }}
+                  style={{ gridTemplateColumns: '2.2fr 1.4fr 1fr 90px 72px', padding: '11px 20px', borderBottom: isLast && teamTotalPages <= 1 ? 'none' : '1px solid #F5F5F5', animationDelay: `${i * 35}ms` }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 34, height: 34, borderRadius: 8, background: cl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -322,7 +330,7 @@ export default function OrganizacaoPage() {
               const isLast = i === pagedFuncoes.length - 1;
               return (
                 <div key={fn.id} className="org-row"
-                  style={{ gridTemplateColumns: '1fr 200px 72px', padding: '11px 20px', borderBottom: isLast && funcaoTotalPages <= 1 ? 'none' : '1px solid #F5F5F5' }}
+                  style={{ gridTemplateColumns: '1fr 200px 72px', padding: '11px 20px', borderBottom: isLast && funcaoTotalPages <= 1 ? 'none' : '1px solid #F5F5F5', animationDelay: `${i * 35}ms` }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -360,7 +368,7 @@ export default function OrganizacaoPage() {
               const isLast = i === pagedTipos.length - 1;
               return (
                 <div key={tt.id} className="org-row"
-                  style={{ gridTemplateColumns: '1fr 160px 72px', padding: '11px 20px', borderBottom: isLast && tiposTotalPages <= 1 ? 'none' : '1px solid #F5F5F5' }}
+                  style={{ gridTemplateColumns: '1fr 160px 72px', padding: '11px 20px', borderBottom: isLast && tiposTotalPages <= 1 ? 'none' : '1px solid #F5F5F5', animationDelay: `${i * 35}ms` }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 8, background: '#ECFEFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

@@ -9,9 +9,10 @@ type Props = {
   date: Date;
   events: CalendarEvent[];
   onEventClick: (id: string) => void;
+  embedded?: boolean;
 };
 
-export function CalendarDayView({ date, events, onEventClick }: Props) {
+export function CalendarDayView({ date, events, onEventClick, embedded }: Props) {
   const eventHours = events.map(e => parseInt(e.hora?.split(':')[0] ?? '12'));
   const START = eventHours.length > 0 ? Math.max(ABS_START, Math.min(...eventHours) - 1) : ABS_START;
   const END = eventHours.length > 0 ? Math.min(ABS_END, Math.max(...eventHours) + 2) : Math.min(ABS_END, 20);
@@ -23,17 +24,15 @@ export function CalendarDayView({ date, events, onEventClick }: Props) {
 
   const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
 
-  return (
-    <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)', border: '1px solid #E5E7EB' }}>
-      <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ width: 44, height: 44, borderRadius: 12, background: '#1B2230', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: '#fff' }}>{date.getDate()}</div>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: '#101828' }}>{MONTHS[date.getMonth()]} {date.getFullYear()}</div>
-          <div style={{ fontSize: 13, color: '#6B7280' }}>{events.length} evento{events.length !== 1 ? 's' : ''}</div>
-        </div>
-      </div>
+  const todayStr = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`;
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  const isToday = dateStr === todayStr;
+  const now = new Date();
+  const nowTop = (now.getHours() - START) * H + (now.getMinutes() / 60) * H;
+  const showNowLine = isToday && now.getHours() >= START && now.getHours() <= END;
 
-      <div style={{ display: 'flex', overflowY: 'auto', maxHeight: 'calc(100vh - 280px)' }}>
+  const inner = (
+    <div style={{ display: 'flex', overflowY: 'auto', flex: embedded ? 1 : undefined, maxHeight: embedded ? undefined : 'calc(100vh - 280px)' }}>
         <div style={{ width: 60, flexShrink: 0 }}>
           {slots.map(h => (
             <div key={h} style={{ height: H, display: 'flex', alignItems: 'flex-start', paddingTop: 6, paddingRight: 8, justifyContent: 'flex-end' }}>
@@ -45,6 +44,11 @@ export function CalendarDayView({ date, events, onEventClick }: Props) {
           {slots.map(h => (
             <div key={h} style={{ position: 'absolute', top: (h - START) * H, left: 0, right: 0, height: H, borderTop: '1px solid #F3F4F6' }} />
           ))}
+          {showNowLine && (
+            <div style={{ position: 'absolute', top: nowTop, left: 0, right: 0, height: 2, background: '#EF4444', zIndex: 3, pointerEvents: 'none' }}>
+              <div className="vpn-now-dot" style={{ position: 'absolute', left: -5, top: '50%', width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }} />
+            </div>
+          )}
           {events.map(ev => {
             const cl = getColor(ev.cor);
             const participants: string[] = [];
@@ -80,6 +84,20 @@ export function CalendarDayView({ date, events, onEventClick }: Props) {
           })}
         </div>
       </div>
+  );
+
+  if (embedded) return inner;
+
+  return (
+    <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 2px rgba(16,24,40,0.04)', border: '1px solid #E5E7EB' }}>
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: isToday ? '#2E5AAC' : '#1B2230', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: '#fff', boxShadow: isToday ? '0 4px 14px rgba(46,90,172,0.32)' : 'none', transition: 'background 0.2s' }}>{date.getDate()}</div>
+        <div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#101828' }}>{MONTHS[date.getMonth()]} {date.getFullYear()}</div>
+          <div style={{ fontSize: 13, color: isToday ? '#2E5AAC' : '#6B7280', fontWeight: isToday ? 500 : 400 }}>{isToday ? 'Hoje · ' : ''}{events.length} evento{events.length !== 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      {inner}
     </div>
   );
 }

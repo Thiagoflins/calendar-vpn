@@ -167,7 +167,9 @@ export default function ContaPage() {
             action={
               <button
                 onClick={() => { setEditingProfile(p => !p); setProfileMsg(''); setProfileErr(''); if (editingProfile) setNome(user.nome ?? ''); }}
-                style={{ fontSize: 12, fontWeight: 500, color: '#2E5AAC', background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+                style={{ fontSize: 12, fontWeight: 500, color: '#2E5AAC', background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: 5, transition: 'background 0.13s, color 0.13s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#F0F4FF'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
               >
                 {editingProfile ? 'Cancelar' : 'Editar'}
               </button>
@@ -187,7 +189,10 @@ export default function ContaPage() {
                 {profileErr && <div style={{ fontSize: 12, color: '#EF4444', marginBottom: 10 }}>{profileErr}</div>}
                 {profileMsg && <div style={{ fontSize: 12, color: '#10B981', marginBottom: 10 }}>{profileMsg}</div>}
                 <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                  <button onClick={saveProfile} disabled={profileLoading} style={{ padding: '7px 18px', background: '#2E5AAC', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  <button onClick={saveProfile} disabled={profileLoading} style={{ padding: '7px 18px', background: '#2E5AAC', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+                  onMouseEnter={e => { if (!profileLoading) { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; } }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+                >
                     {profileLoading ? 'Salvando…' : 'Salvar'}
                   </button>
                 </div>
@@ -201,7 +206,9 @@ export default function ContaPage() {
             action={
               <button
                 onClick={() => { setEditingPass(p => !p); setPassMsg(''); setPassErr(''); setNewPass(''); setConfirmPass(''); }}
-                style={{ fontSize: 12, fontWeight: 500, color: '#2E5AAC', background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+                style={{ fontSize: 12, fontWeight: 500, color: '#2E5AAC', background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: 5, transition: 'background 0.13s, color 0.13s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#F0F4FF'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
               >
                 {editingPass ? 'Cancelar' : 'Alterar senha'}
               </button>
@@ -217,7 +224,10 @@ export default function ContaPage() {
                 <InputField label="Nova senha" value={newPass} onChange={setNewPass} type="password" placeholder="Mínimo 6 caracteres" />
                 <InputField label="Confirmar nova senha" value={confirmPass} onChange={setConfirmPass} type="password" placeholder="Repita a nova senha" />
                 {passErr && <div style={{ fontSize: 12, color: '#EF4444', marginBottom: 10 }}>{passErr}</div>}
-                <button type="submit" disabled={passLoading} style={{ padding: '7px 18px', background: '#2E5AAC', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                <button type="submit" disabled={passLoading} style={{ padding: '7px 18px', background: '#2E5AAC', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+                  onMouseEnter={e => { if (!passLoading) { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; } }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+                >
                   {passLoading ? 'Alterando…' : 'Salvar senha'}
                 </button>
               </form>
@@ -231,7 +241,9 @@ export default function ContaPage() {
             <div style={{ fontSize: 13, color: '#6B7280' }}>Encerrar a sessão atual e voltar para a tela de login.</div>
             <button
               onClick={async () => { await authService.signOut(); router.push('/login'); }}
-              style={{ padding: '7px 20px', background: '#fff', color: '#EF4444', border: '1px solid #FECACA', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              style={{ padding: '7px 20px', background: '#fff', color: '#EF4444', border: '1px solid #FECACA', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.13s, border-color 0.13s, transform 0.12s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#FEF2F2'; el.style.borderColor = '#FCA5A5'; el.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#FECACA'; el.style.transform = 'translateY(0)'; }}
             >
               Sair da conta
             </button>

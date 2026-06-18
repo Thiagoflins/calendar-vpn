@@ -33,6 +33,7 @@ export default function HomePage() {
 
   const [weekDate, setWeekDate] = useState(today);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedDayDs, setSelectedDayDs] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
@@ -228,23 +229,31 @@ export default function HomePage() {
       <div style={{ height: '100%', overflow: 'hidden', padding: '16px 20px' }}>
         <div style={{ background: '#fff', borderRadius: 6, border: '1px solid #EEF0F4', boxShadow: '0 1px 3px rgba(16,24,40,0.05)', display: 'flex', flexDirection: 'column', overflow: 'hidden', height: '100%' }}>
 
+          {/* ── Header ── */}
           <div style={{ padding: '14px 18px', borderBottom: '1px solid #F0F2F5', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14, fontWeight: 500, color: '#101828' }}>{weekLabel}</div>
             </div>
-            <button onClick={() => setWeekDate(today)} style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#374151', fontSize: 12, cursor: 'pointer' }}>Hoje</button>
+            <button onClick={() => { setWeekDate(today); setSelectedDayDs(null); }} style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#374151', fontSize: 12, cursor: 'pointer', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>Hoje</button>
             <div style={{ display: 'flex', gap: 2 }}>
-              <button onClick={() => navWeek(-1)} style={{ width: 28, height: 28, borderRadius: 7, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-              <button onClick={() => navWeek(1)}  style={{ width: 28, height: 28, borderRadius: 7, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+              <button onClick={() => navWeek(-1)} style={{ width: 28, height: 28, borderRadius: 7, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>‹</button>
+              <button onClick={() => navWeek(1)}  style={{ width: 28, height: 28, borderRadius: 7, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>›</button>
             </div>
-            <button onClick={() => router.push('/calendario')} style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', fontSize: 12, cursor: 'pointer', fontWeight: 500 }}>Ver calendário</button>
+            <button
+              onClick={() => router.push('/calendario')}
+              style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', fontSize: 12, cursor: 'pointer', fontWeight: 500, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+            >Ver calendário</button>
           </div>
 
+          {/* ── Calendário da semana (dia selecionado filtra os eventos) ── */}
           <DashboardWeekCalendar
             date={weekDate}
             events={events}
             onEventClick={id => setSelectedEventId(id)}
-            onDayClick={ds => router.push(`/calendario?date=${ds}&view=dia`)}
+            onDayClick={ds => setSelectedDayDs(prev => prev === ds ? null : ds)}
+            selectedDay={selectedDayDs}
           />
         </div>
       </div>
