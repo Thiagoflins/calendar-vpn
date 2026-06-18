@@ -176,7 +176,7 @@ function CalendarioContent() {
 
           {/* Painel do dia selecionado */}
           {view === 'mes' && (
-            <div style={{ padding: '14px 14px 0', background: '#F5F6FA' }}>
+            <div key={mobileSelectedDay} className="vpn-stagger-2" style={{ padding: '14px 14px 0', background: '#F5F6FA' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{selLabel}</div>

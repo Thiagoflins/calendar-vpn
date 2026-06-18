@@ -27,10 +27,12 @@ export function EventTypePickerDialog({ onClose, onPick }: Props) {
   return (
     <div
       onClick={onClose}
+      className="vpn-modal-bg"
       style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'rgba(16,24,40,0.45)', backdropFilter: 'blur(6px)' }}
     >
       <div
         onClick={e => e.stopPropagation()}
+        className="vpn-modal"
         style={{ background: '#fff', borderRadius: 12, padding: '28px 28px 24px', width: '100%', maxWidth: 440, boxShadow: '0 20px 60px rgba(16,24,40,0.18)' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>

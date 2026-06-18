@@ -60,10 +60,12 @@ export function CustomRecurrenceDialog({ baseDate, onClose, onConfirm }: Props) 
   return (
     <div
       onClick={onClose}
+      className="vpn-modal-bg"
       style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'rgba(16,24,40,0.45)', backdropFilter: 'blur(4px)' }}
     >
       <div
         onClick={e => e.stopPropagation()}
+        className="vpn-modal"
         style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 440, boxShadow: '0 16px 48px rgba(16,24,40,0.18)', overflow: 'hidden' }}
       >
         {/* Header */}

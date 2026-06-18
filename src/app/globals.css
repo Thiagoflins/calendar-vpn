@@ -147,3 +147,34 @@
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
+
+/* ── VPN Animations ─────────────────────────────────── */
+@keyframes vpn-fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes vpn-fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vpn-scaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes vpn-slideFromBottom {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.vpn-page       { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) both; }
+.vpn-modal-bg   { animation: vpn-fadeIn 0.18s ease both; }
+.vpn-modal      { animation: vpn-scaleIn 0.26s cubic-bezier(.22,.68,0,1.2) both; }
+.vpn-nav-mobile { animation: vpn-slideFromBottom 0.38s cubic-bezier(.22,.68,0,1.2) both; }
+
+.vpn-stagger-1 { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) 0ms   both; }
+.vpn-stagger-2 { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) 70ms  both; }
+.vpn-stagger-3 { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) 140ms both; }
+.vpn-stagger-4 { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) 210ms both; }
+.vpn-stagger-5 { animation: vpn-fadeUp 0.32s cubic-bezier(.22,.68,0,1.2) 280ms both; }
+
+button:active:not(:disabled):not(.no-press) { transform: scale(0.97); }

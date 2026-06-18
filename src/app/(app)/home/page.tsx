@@ -67,7 +67,7 @@ export default function HomePage() {
         <div style={{ background: '#F5F6FA', minHeight: '100%', padding: '20px 16px 100px', fontFamily: "'Outfit', sans-serif" }}>
 
           {/* Perfil do usuário */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+          <div className="vpn-stagger-1" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
             <div style={{
               width: 50, height: 50, borderRadius: 13, background: '#1C3568',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -86,7 +86,7 @@ export default function HomePage() {
           </div>
 
           {/* Acesso Rápido */}
-          <div style={{ marginBottom: 28 }}>
+          <div className="vpn-stagger-2" style={{ marginBottom: 28 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#9AA3B5', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
               Acesso Rápido
             </div>
@@ -136,7 +136,11 @@ export default function HomePage() {
                   flexDirection: 'column', alignItems: 'flex-start', gap: 12,
                   textAlign: 'left', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                   fontFamily: "'Outfit', sans-serif",
-                }}>
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 18px rgba(0,0,0,0.09)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)'; }}
+                >
                   <div style={{ color: card.color }}>{card.icon}</div>
                   <div style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>{card.label}</div>
                 </button>
@@ -145,7 +149,7 @@ export default function HomePage() {
           </div>
 
           {/* Próximos Eventos */}
-          <div>
+          <div className="vpn-stagger-3">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#9AA3B5', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Próximos Eventos

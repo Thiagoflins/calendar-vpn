@@ -121,10 +121,10 @@ export function Sidebar() {
                     color: isActive ? '#2E5AAC' : isSoon ? '#C4CAD4' : '#5A6070',
                     fontSize: 13, fontWeight: isActive ? 500 : 400,
                     textAlign: 'left', marginBottom: 1,
-                    transition: 'background 0.12s, color 0.12s',
+                    transition: 'background 0.12s, color 0.12s, transform 0.15s',
                   }}
-                  onMouseEnter={e => { if (!isActive && !isSoon) { (e.currentTarget as HTMLButtonElement).style.background = '#F5F7FA'; (e.currentTarget as HTMLButtonElement).style.color = '#101828'; } }}
-                  onMouseLeave={e => { if (!isActive && !isSoon) { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#5A6070'; } }}
+                  onMouseEnter={e => { if (!isActive && !isSoon) { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.color = '#101828'; el.style.transform = 'translateX(2px)'; } }}
+                  onMouseLeave={e => { if (!isActive && !isSoon) { const el = e.currentTarget as HTMLButtonElement; el.style.background = 'transparent'; el.style.color = '#5A6070'; el.style.transform = 'translateX(0)'; } }}
                 >
                   <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
                     <Icon />

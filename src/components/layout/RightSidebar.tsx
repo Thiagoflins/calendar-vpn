@@ -113,11 +113,15 @@ export function RightSidebar({ onAddEvent }: Props) {
           <div style={{ display: 'flex', gap: 2 }}>
             <button
               onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n; })}
-              style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}
             >‹</button>
             <button
               onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n; })}
-              style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 24, height: 24, borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}
             >›</button>
           </div>
         </div>
@@ -159,7 +163,9 @@ export function RightSidebar({ onAddEvent }: Props) {
           <span style={{ fontSize: 11, fontWeight: 600, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Próximos eventos</span>
           <button
             onClick={() => router.push('/calendario')}
-            style={{ fontSize: 11, color: '#2E5AAC', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, padding: 0 }}
+            style={{ fontSize: 11, color: '#2E5AAC', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, padding: 0, transition: 'opacity 0.13s' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.65'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
           >Ver todos</button>
         </div>
         {upcoming.length === 0 ? (
@@ -168,7 +174,9 @@ export function RightSidebar({ onAddEvent }: Props) {
           <div
             key={ev.id}
             onClick={() => router.push(`/calendario?date=${ev.data}&view=dia`)}
-            style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '7px 0', borderBottom: '1px solid #F5F5F5', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '7px 6px', margin: '0 -6px', borderBottom: '1px solid #F5F5F5', cursor: 'pointer', borderRadius: 7, transition: 'background 0.13s' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = '#F5F7FC'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
           >
             <div style={{ textAlign: 'center', minWidth: 36, flexShrink: 0 }}>
               <div style={{ fontSize: 9, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', lineHeight: 1 }}>{fmtWeekday(ev.data)}</div>

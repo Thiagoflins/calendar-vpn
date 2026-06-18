@@ -1,5 +1,6 @@
 'use client';
 import { Suspense } from 'react';
+import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { RightSidebar } from './RightSidebar';
@@ -16,6 +17,7 @@ type Props = {
 
 export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam, hideRightSidebar }: Props) {
   const isMobile = useIsMobile();
+  const pathname = usePathname();
 
   if (isMobile) {
     return (
@@ -23,7 +25,7 @@ export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam, hideRig
         <Suspense fallback={<div style={{ height: 56, background: '#fff', borderBottom: '1px solid #E5E7EB' }} />}>
           <Header onAddEvent={onAddEvent} onAddPerson={onAddPerson} onAddTeam={onAddTeam} />
         </Suspense>
-        <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        <main key={pathname} className="vpn-page" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           {children}
         </main>
         <MobileNav onAddEvent={onAddEvent} />
@@ -40,7 +42,7 @@ export function AppShell({ children, onAddEvent, onAddPerson, onAddTeam, hideRig
         <Suspense fallback={<div style={{ height: 60, background: '#fff', borderBottom: '1px solid #E5E7EB' }} />}>
           <Header onAddEvent={onAddEvent} onAddPerson={onAddPerson} onAddTeam={onAddTeam} />
         </Suspense>
-        <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        <main key={pathname} className="vpn-page" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           {children}
         </main>
       </div>

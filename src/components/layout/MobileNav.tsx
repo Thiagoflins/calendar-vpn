@@ -42,7 +42,7 @@ export function MobileNav({ onAddEvent }: Props) {
   const activePath = '/' + pathname.split('/')[1];
 
   return (
-    <nav style={{
+    <nav className="vpn-nav-mobile" style={{
       flexShrink: 0, background: '#fff',
       borderTop: '1px solid #E5E7EB',
       display: 'flex', alignItems: 'stretch',

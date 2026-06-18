@@ -66,10 +66,12 @@ export function EventDetailModal({ event, onClose, onEdit, onDelete }: Props) {
   return (
     <div
       onClick={onClose}
+      className="vpn-modal-bg"
       style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'rgba(16,24,40,0.35)', backdropFilter: 'blur(4px)' }}
     >
       <div
         onClick={e => e.stopPropagation()}
+        className="vpn-modal"
         style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 480, maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 32px rgba(16,24,40,0.14)' }}
       >
         {/* Header */}

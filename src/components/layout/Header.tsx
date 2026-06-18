@@ -102,14 +102,36 @@ export function Header({ onAddEvent }: HeaderProps) {
 
       {page === 'calendario' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 2 : 4 }}>
-          <button onClick={() => navDate(-1)} style={{ width: isMobile ? 26 : 30, height: isMobile ? 26 : 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-          {!isMobile && <button onClick={() => setParam('date', fd(new Date()))} style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 13 }}>Hoje</button>}
-          <button onClick={() => navDate(1)} style={{ width: isMobile ? 26 : 30, height: isMobile ? 26 : 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+          <button
+            onClick={() => navDate(-1)}
+            style={{ width: isMobile ? 26 : 30, height: isMobile ? 26 : 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s, transform 0.12s' }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}
+          >‹</button>
+          {!isMobile && (
+            <button
+              onClick={() => setParam('date', fd(new Date()))}
+              style={{ padding: '5px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 13, transition: 'background 0.13s, border-color 0.13s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}
+            >Hoje</button>
+          )}
+          <button
+            onClick={() => navDate(1)}
+            style={{ width: isMobile ? 26 : 30, height: isMobile ? 26 : 30, borderRadius: '50%', border: '1px solid #E5E7EB', background: '#fff', cursor: 'pointer', color: '#374151', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s, transform 0.12s' }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}
+          >›</button>
         </div>
       )}
 
       {page === 'calendario' && !isMobile && (
-        <button onClick={onAddEvent} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0 }}>
+        <button
+          onClick={onAddEvent}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 6, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, flexShrink: 0, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+          onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
+          onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+        >
           <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Adicionar
         </button>
       )}
