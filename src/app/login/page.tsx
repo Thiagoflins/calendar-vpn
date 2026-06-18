@@ -188,7 +188,7 @@ export default function LoginPage() {
               }}>
                 Bem-vindo!
               </h1>
-              <p style={{ fontSize: 13, color: '#C4BFB8', margin: 0, fontWeight: 500 }}>
+              <p style={{ fontSize: 13, color: '#949390', margin: 0, fontWeight: 500 }}>
                 Entre com suas credenciais para continuar.
               </p>
             </div>
@@ -196,7 +196,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit}>
               {/* E-mail */}
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#A8A59E', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
                   E-mail
                 </label>
                 <input
@@ -212,7 +212,7 @@ export default function LoginPage() {
 
               {/* Senha */}
               <div style={{ marginBottom: 26 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#A8A59E', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
                   Senha
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -255,7 +255,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <p style={{ textAlign: 'center', marginTop: 22, fontSize: 13, color: '#A8A59E', margin: '22px 0 0' }}>
+            <p style={{ textAlign: 'center', marginTop: 22, fontSize: 13, color: '#949390', margin: '22px 0 0' }}>
               Não tem conta?{' '}
               <Link href="/cadastro" className="login-link">
                 Criar conta

@@ -1,20 +1,16 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { DashboardWeekCalendar } from '@/components/dashboard/DashboardWeekCalendar';
 import { EventDetailModal } from '@/components/calendar/EventDetailModal';
 import { useEvents, useRemoveEvent } from '@/hooks/useEvents';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { authService } from '@/services/authService';
+import { AuthUser } from '@/types';
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const DAY_LABELS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-const DAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-
-const COR_MAP: Record<string, string> = {
-  azul: '#2E5AAC', verde: '#1D9E75', rosa: '#E4608E',
-  roxo: '#7F77DD', laranja: '#E87A2D', amarelo: '#BA7517',
-};
+const DAYS_ABREV = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 
 function fd(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -35,17 +31,17 @@ export default function HomePage() {
   const { data: events = [] } = useEvents();
   const deleteEvent = useRemoveEvent();
 
-  // Desktop
   const [weekDate, setWeekDate] = useState(today);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
-  // Mobile mini calendar
-  const [miniDate, setMiniDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
-  const [selectedDay, setSelectedDay] = useState(todayStr);
+  useEffect(() => {
+    authService.getCurrentUser().then(u => setUser(u));
+  }, []);
 
   const selectedEvent = selectedEventId ? events.find(e => e.id === selectedEventId) ?? null : null;
 
-  // Desktop week label
+  // Desktop week nav
   const ws = weekStart(weekDate);
   const we = weekEnd(weekDate);
   const wsMonth = ws.getMonth(), weMonth = we.getMonth();
@@ -56,141 +52,153 @@ export default function HomePage() {
     const d = new Date(weekDate); d.setDate(d.getDate() + dir * 7); setWeekDate(d);
   };
 
-  // Mini calendar cells
-  const mY = miniDate.getFullYear(), mM = miniDate.getMonth();
-  const first = new Date(mY, mM, 1);
-  let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
-  const startCell = new Date(mY, mM, 1 - dow);
-  const miniCells = Array.from({ length: 35 }, (_, i) => {
-    const d = new Date(startCell); d.setDate(startCell.getDate() + i);
-    const ds = fd(d), inM = d.getMonth() === mM;
-    const dayEvs = inM ? events.filter(e => e.data === ds) : [];
-    return { day: d.getDate(), ds, inM, isToday: ds === todayStr, isSelected: ds === selectedDay, dayEvs };
-  });
+  const upcomingEvents = events
+    .filter(e => e.data >= todayStr)
+    .sort((a, b) => a.data.localeCompare(b.data) || (a.hora ?? '').localeCompare(b.hora ?? ''))
+    .slice(0, 5);
 
-  // Events for selected day
-  const selectedDayEvs = events
-    .filter(e => e.data === selectedDay)
-    .sort((a, b) => (a.hora ?? '').localeCompare(b.hora ?? ''));
-
-  // Format selected day label
-  const selDate = new Date(selectedDay + 'T12:00:00');
-  const selLabel = `${DAYS_PT[selDate.getDay()]}, ${selDate.getDate()} de ${MONTHS[selDate.getMonth()]}`;
+  const initials = user?.nome
+    ? user.nome.split(' ').filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase()
+    : user?.email?.[0]?.toUpperCase() ?? '?';
 
   if (isMobile) {
     return (
       <AppShell onAddEvent={() => router.push('/calendario')}>
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: '#F5F6FA' }}>
+        <div style={{ background: '#F5F6FA', minHeight: '100%', padding: '20px 16px 100px', fontFamily: "'Outfit', sans-serif" }}>
 
-          {/* Mini Calendar */}
-          <div style={{ background: '#fff', padding: '16px 16px 12px', flexShrink: 0 }}>
-
-            {/* Month nav */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <button
-                onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n; })}
-                style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >‹</button>
-              <span style={{ fontSize: 15, fontWeight: 600, color: '#101828' }}>
-                {MONTHS[mM]} {mY}
-              </span>
-              <button
-                onClick={() => setMiniDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n; })}
-                style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >›</button>
+          {/* Perfil do usuário */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+            <div style={{
+              width: 50, height: 50, borderRadius: 13, background: '#1C3568',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: 17, fontWeight: 700, flexShrink: 0,
+            }}>
+              {initials}
             </div>
-
-            {/* Day labels */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 6 }}>
-              {DAY_LABELS.map(d => (
-                <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#9AA3B5', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{d}</div>
-              ))}
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: '#101828', lineHeight: 1.3 }}>
+                {user?.nome ?? 'Usuário'}
+              </div>
+              <div style={{ fontSize: 12, color: '#9AA3B5', marginTop: 2 }}>
+                {user?.email ?? ''}
+              </div>
             </div>
+          </div>
 
-            {/* Days grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
-              {miniCells.map(cell => (
-                <div
-                  key={cell.ds}
-                  onClick={() => { if (cell.inM) setSelectedDay(cell.ds); }}
-                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2px 0', cursor: cell.inM ? 'pointer' : 'default' }}
-                >
-                  <span style={{
-                    width: 32, height: 32, borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 13, fontWeight: cell.isToday || cell.isSelected ? 700 : 400,
-                    color: cell.isSelected ? '#fff' : cell.isToday ? '#2E5AAC' : cell.inM ? '#101828' : '#C4C9D4',
-                    background: cell.isSelected ? '#2E5AAC' : cell.isToday && !cell.isSelected ? '#EEF2FF' : 'transparent',
-                    transition: 'all 0.12s',
-                  }}>
-                    {cell.day}
-                  </span>
-                  {/* Event dots */}
-                  {cell.dayEvs.length > 0 && (
-                    <div style={{ display: 'flex', gap: 2, marginTop: 2, height: 5 }}>
-                      {cell.dayEvs.slice(0, 3).map(ev => (
-                        <span key={ev.id} style={{ width: 4, height: 4, borderRadius: '50%', background: COR_MAP[ev.cor] ?? '#2E5AAC', flexShrink: 0 }} />
-                      ))}
-                    </div>
-                  )}
-                </div>
+          {/* Acesso Rápido */}
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#9AA3B5', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
+              Acesso Rápido
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {[
+                {
+                  label: 'Novo evento', color: '#5350C4',
+                  icon: (
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M12 11V16M9.5 13.5H14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  ),
+                  action: () => router.push('/calendario'),
+                },
+                {
+                  label: 'Calendário', color: '#1B9E75',
+                  icon: (
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  ),
+                  action: () => router.push('/calendario'),
+                },
+                {
+                  label: 'Pessoas', color: '#7C6FCF',
+                  icon: (
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path d="M17 21V19C17 16.791 15.209 15 13 15H5C2.791 15 1 16.791 1 19V21M23 21V19C22.999 17.153 21.765 15.537 20 15.09M16 3.13C17.769 3.579 19.006 5.198 19.006 7.05C19.006 8.902 17.769 10.521 16 10.97M9 11C11.209 11 13 9.209 13 7C13 4.791 11.209 3 9 3C6.791 3 5 4.791 5 7C5 9.209 6.791 11 9 11Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ),
+                  action: () => router.push('/pessoas'),
+                },
+                {
+                  label: 'Organização', color: '#E07A2A',
+                  icon: (
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path d="M3 21H21M6 21V8L12 3L18 8V21M9 21V15H15V21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ),
+                  action: () => router.push('/organizacao'),
+                },
+              ].map(card => (
+                <button key={card.label} onClick={card.action} style={{
+                  background: '#fff', borderRadius: 14, padding: '16px 14px',
+                  border: 'none', cursor: 'pointer', display: 'flex',
+                  flexDirection: 'column', alignItems: 'flex-start', gap: 12,
+                  textAlign: 'left', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                  fontFamily: "'Outfit', sans-serif",
+                }}>
+                  <div style={{ color: card.color }}>{card.icon}</div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>{card.label}</div>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Events for selected day */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 100px' }}>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{selLabel}</div>
-                <div style={{ fontSize: 12, color: '#9AA3B5', marginTop: 1 }}>
-                  {selectedDayEvs.length > 0
-                    ? `${selectedDayEvs.length} evento${selectedDayEvs.length > 1 ? 's' : ''}`
-                    : 'Sem eventos'}
-                </div>
+          {/* Próximos Eventos */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#9AA3B5', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                Próximos Eventos
               </div>
-              <button
-                onClick={() => router.push(`/calendario?date=${selectedDay}&view=dia`)}
-                style={{ fontSize: 12, color: '#2E5AAC', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, fontFamily: "'Outfit', sans-serif" }}
-              >Ver dia →</button>
+              <button onClick={() => router.push('/calendario')} style={{
+                fontSize: 13, color: '#2E5AAC', fontWeight: 500,
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontFamily: "'Outfit', sans-serif",
+              }}>
+                Ver todos
+              </button>
             </div>
 
-            {selectedDayEvs.length === 0 ? (
-              <div style={{ background: '#fff', borderRadius: 12, padding: '32px 20px', textAlign: 'center', border: '1px solid #E5E7EB' }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#F0F4FB', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                    <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4Z" stroke="#9AA3B5" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <div style={{ fontSize: 13, color: '#9AA3B5' }}>Nenhum evento neste dia</div>
+            {upcomingEvents.length === 0 ? (
+              <div style={{ background: '#fff', borderRadius: 12, padding: '24px 16px', textAlign: 'center', fontSize: 13, color: '#9AA3B5' }}>
+                Nenhum evento próximo
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {selectedDayEvs.map(ev => {
-                  const color = COR_MAP[ev.cor] ?? '#2E5AAC';
-                  const label = ev.type === 'culto' ? 'Culto' : 'Atividade';
-                  const details = [ev.pastor, ev.responsavel, ev.adoracao?.responsavel].filter(Boolean);
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {upcomingEvents.map((ev, idx) => {
+                  const d = new Date(ev.data + 'T12:00:00');
+                  const dayAbbrev = DAYS_ABREV[d.getDay()].toUpperCase();
+                  const dayNum = d.getDate();
+                  const isLast = idx === upcomingEvents.length - 1;
                   return (
-                    <div
+                    <button
                       key={ev.id}
                       onClick={() => setSelectedEventId(ev.id)}
-                      style={{ background: '#fff', borderRadius: 12, overflow: 'hidden', border: '1px solid #E5E7EB', cursor: 'pointer', display: 'flex', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+                      style={{
+                        display: 'flex', alignItems: 'flex-start', gap: 16,
+                        padding: '12px 4px',
+                        border: 'none',
+                        borderBottom: isLast ? 'none' : '1px solid #EDE8DF',
+                        background: 'none',
+                        cursor: 'pointer', textAlign: 'left', width: '100%',
+                        fontFamily: "'Outfit', sans-serif",
+                      }}
                     >
-                      <div style={{ width: 4, background: color, flexShrink: 0 }} />
-                      <div style={{ padding: '12px 14px', flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                          <span style={{ fontSize: 11, fontWeight: 600, color, letterSpacing: '0.02em' }}>{label}</span>
+                      <div style={{ width: 42, flexShrink: 0, textAlign: 'center' }}>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: '#A8A59E', letterSpacing: '0.06em', lineHeight: 1 }}>
+                          {dayAbbrev}
                         </div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: '#101828', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.nome}</div>
-                        {details.length > 0 && (
-                          <div style={{ fontSize: 12, color: '#6B7280', marginTop: 3 }}>{details[0]}</div>
-                        )}
+                        <div style={{ fontSize: 26, fontWeight: 700, color: '#101828', lineHeight: 1.1 }}>
+                          {dayNum}
+                        </div>
+                      </div>
+                      <div style={{ paddingTop: 2 }}>
+                        <div style={{ fontSize: 14, fontWeight: 500, color: '#101828' }}>· {ev.nome}</div>
                         {ev.hora && (
-                          <div style={{ fontSize: 12, color: '#9AA3B5', marginTop: 4, fontWeight: 500 }}>{ev.hora.slice(0,5)}</div>
+                          <div style={{ fontSize: 12, color: '#9AA3B5', marginTop: 3 }}>{ev.hora.slice(0, 5)}</div>
                         )}
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
