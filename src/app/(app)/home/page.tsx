@@ -33,7 +33,7 @@ export default function HomePage() {
 
   const [weekDate, setWeekDate] = useState(today);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const [selectedDayDs, setSelectedDayDs] = useState<string | null>(null);
+  const [selectedDayDs, setSelectedDayDs] = useState<string | null>(todayStr);
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
@@ -51,6 +51,7 @@ export default function HomePage() {
     : `${ws.getDate()} ${MONTHS[wsMonth].slice(0,3)} – ${we.getDate()} ${MONTHS[weMonth].slice(0,3)} ${ws.getFullYear()}`;
   const navWeek = (dir: number) => {
     const d = new Date(weekDate); d.setDate(d.getDate() + dir * 7); setWeekDate(d);
+    setSelectedDayDs(null);
   };
 
   const upcomingEvents = events
@@ -234,7 +235,7 @@ export default function HomePage() {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14, fontWeight: 500, color: '#101828' }}>{weekLabel}</div>
             </div>
-            <button onClick={() => { setWeekDate(today); setSelectedDayDs(null); }} style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#374151', fontSize: 12, cursor: 'pointer', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>Hoje</button>
+            <button onClick={() => { setWeekDate(today); setSelectedDayDs(todayStr); }} style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #E5E7EB', background: '#fff', color: '#374151', fontSize: 12, cursor: 'pointer', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>Hoje</button>
             <div style={{ display: 'flex', gap: 2 }}>
               <button onClick={() => navWeek(-1)} style={{ width: 28, height: 28, borderRadius: 7, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>‹</button>
               <button onClick={() => navWeek(1)}  style={{ width: 28, height: 28, borderRadius: 7, border: '1px solid #E5E7EB', background: '#fff', color: '#6B7280', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.13s, border-color 0.13s' }} onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#F5F7FA'; el.style.borderColor = '#D1D5DB'; }} onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#fff'; el.style.borderColor = '#E5E7EB'; }}>›</button>
