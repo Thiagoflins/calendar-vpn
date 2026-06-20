@@ -53,6 +53,14 @@ export const authService = {
     if (error) throw new Error(error.message);
   },
 
+  async resetPassword(email: string): Promise<void> {
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-senha`,
+    });
+    if (error) throw new Error(error.message);
+  },
+
   async signOut(): Promise<void> {
     const supabase = createClient();
     await supabase.auth.signOut();

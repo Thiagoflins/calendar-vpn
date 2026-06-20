@@ -66,11 +66,18 @@ const CSS = `
 
 export default function LoginPage() {
   const router = useRouter();
+  const [mode, setMode] = useState<'login' | 'forgot'>('login');
+
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd]   = useState(false);
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
+
+  const [forgotEmail, setForgotEmail]   = useState('');
+  const [forgotMsg, setForgotMsg]       = useState('');
+  const [forgotErr, setForgotErr]       = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -84,6 +91,27 @@ export default function LoginPage() {
       setError(err instanceof Error ? err.message : 'Credenciais inválidas. Tente novamente.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  function openForgot() {
+    setForgotEmail(email);
+    setForgotMsg('');
+    setForgotErr('');
+    setMode('forgot');
+  }
+
+  async function handleForgot(e: React.FormEvent) {
+    e.preventDefault();
+    setForgotErr(''); setForgotMsg('');
+    setForgotLoading(true);
+    try {
+      await authService.resetPassword(forgotEmail);
+      setForgotMsg('Link enviado! Verifique seu e-mail e clique no link para redefinir sua senha.');
+    } catch (err) {
+      setForgotErr(err instanceof Error ? err.message : 'Erro ao enviar link.');
+    } finally {
+      setForgotLoading(false);
     }
   }
 
@@ -178,89 +206,163 @@ export default function LoginPage() {
         }}>
           <div style={{ width: '100%', maxWidth: 320 }}>
 
-            {/* Heading */}
-            <div style={{ marginBottom: 28 }}>
-              <h1 style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: 26, fontWeight: 500,
-                color: '#0F0E0C', margin: '0 0 6px',
-                letterSpacing: '-0.01em', lineHeight: 1.2,
-              }}>
-                Bem-vindo!
-              </h1>
-              <p style={{ fontSize: 13, color: '#949390', margin: 0, fontWeight: 500 }}>
-                Entre com suas credenciais para continuar.
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              {/* E-mail */}
-              <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
-                  E-mail
-                </label>
-                <input
-                  className="login-input"
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  placeholder="seu@email.com"
-                />
+            {mode === 'login' ? (<>
+              {/* Heading */}
+              <div style={{ marginBottom: 28 }}>
+                <h1 style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 26, fontWeight: 500,
+                  color: '#0F0E0C', margin: '0 0 6px',
+                  letterSpacing: '-0.01em', lineHeight: 1.2,
+                }}>
+                  Bem-vindo!
+                </h1>
+                <p style={{ fontSize: 13, color: '#949390', margin: 0, fontWeight: 500 }}>
+                  Entre com suas credenciais para continuar.
+                </p>
               </div>
 
-              {/* Senha */}
-              <div style={{ marginBottom: 26 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
-                  Senha
-                </label>
-                <div style={{ position: 'relative' }}>
+              <form onSubmit={handleSubmit}>
+                {/* E-mail */}
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
+                    E-mail
+                  </label>
                   <input
                     className="login-input"
-                    type={showPwd ? 'text' : 'password'}
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                     required
-                    autoComplete="current-password"
-                    placeholder="••••••••"
-                    style={{ paddingRight: 42 }}
+                    autoComplete="email"
+                    placeholder="seu@email.com"
                   />
-                  <button type="button" className="pwd-toggle" onClick={() => setShowPwd(v => !v)}>
-                    {showPwd ? (
-                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                        <path d="M17.94 17.94A10.07 10.07 0 0112 20C7 20 2.73 16.39 1 12a10.07 10.07 0 012.06-3.94M9.9 4.24A9.12 9.12 0 0112 4c5 0 9.27 3.61 11 8a10.12 10.12 0 01-2.54 3.74M1 1l22 22"
-                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                      </svg>
-                    ) : (
-                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                        <path d="M1 12C2.73 7.61 7 4 12 4s9.27 3.61 11 8c-1.73 4.39-6 8-11 8S2.73 16.39 1 12z"
-                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                      </svg>
-                    )}
-                  </button>
                 </div>
+
+                {/* Senha */}
+                <div style={{ marginBottom: 26 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 400, color: '#1C3568' }}>
+                      Senha
+                    </label>
+                    <button
+                      type="button"
+                      onClick={openForgot}
+                      style={{ background: 'none', border: 'none', fontSize: 12, color: '#1C3568', cursor: 'pointer', padding: 0, fontFamily: "'Outfit', sans-serif", fontWeight: 500, transition: 'opacity 0.13s' }}
+                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = '0.65'}
+                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = '1'}
+                    >
+                      Esqueceu a senha?
+                    </button>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      className="login-input"
+                      type={showPwd ? 'text' : 'password'}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      required
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      style={{ paddingRight: 42 }}
+                    />
+                    <button type="button" className="pwd-toggle" onClick={() => setShowPwd(v => !v)}>
+                      {showPwd ? (
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                          <path d="M17.94 17.94A10.07 10.07 0 0112 20C7 20 2.73 16.39 1 12a10.07 10.07 0 012.06-3.94M9.9 4.24A9.12 9.12 0 0112 4c5 0 9.27 3.61 11 8a10.12 10.12 0 01-2.54 3.74M1 1l22 22"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                        </svg>
+                      ) : (
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                          <path d="M1 12C2.73 7.61 7 4 12 4s9.27 3.61 11 8c-1.73 4.39-6 8-11 8S2.73 16.39 1 12z"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Erro */}
+                {error && (
+                  <div style={{ marginBottom: 18, padding: '10px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, fontSize: 13, color: '#DC2626' }}>
+                    {error}
+                  </div>
+                )}
+
+                <button type="submit" className="login-btn" disabled={loading}>
+                  {loading ? 'Entrando…' : 'Entrar'}
+                </button>
+              </form>
+
+              <p style={{ textAlign: 'center', marginTop: 22, fontSize: 13, color: '#949390', margin: '22px 0 0' }}>
+                Não tem conta?{' '}
+                <Link href="/cadastro" className="login-link">
+                  Criar conta
+                </Link>
+              </p>
+            </>) : (<>
+              {/* Modo recuperar senha */}
+              <div style={{ marginBottom: 28 }}>
+                <h1 style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 22, fontWeight: 500,
+                  color: '#0F0E0C', margin: '0 0 6px',
+                  letterSpacing: '-0.01em', lineHeight: 1.2,
+                }}>
+                  Recuperar senha
+                </h1>
+                <p style={{ fontSize: 13, color: '#949390', margin: 0, fontWeight: 500 }}>
+                  Informe seu e-mail e enviaremos um link de redefinição.
+                </p>
               </div>
 
-              {/* Erro */}
-              {error && (
-                <div style={{ marginBottom: 18, padding: '10px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, fontSize: 13, color: '#DC2626' }}>
-                  {error}
+              {forgotMsg ? (
+                <div style={{ padding: '16px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 8, fontSize: 13, color: '#15803D', lineHeight: 1.5, marginBottom: 20 }}>
+                  {forgotMsg}
                 </div>
+              ) : (
+                <form onSubmit={handleForgot}>
+                  <div style={{ marginBottom: 20 }}>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
+                      E-mail
+                    </label>
+                    <input
+                      className="login-input"
+                      type="email"
+                      value={forgotEmail}
+                      onChange={e => setForgotEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                      placeholder="seu@email.com"
+                    />
+                  </div>
+
+                  {forgotErr && (
+                    <div style={{ marginBottom: 16, padding: '10px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, fontSize: 13, color: '#DC2626' }}>
+                      {forgotErr}
+                    </div>
+                  )}
+
+                  <button type="submit" className="login-btn" disabled={forgotLoading}>
+                    {forgotLoading ? 'Enviando…' : 'Enviar link de recuperação'}
+                  </button>
+                </form>
               )}
 
-              <button type="submit" className="login-btn" disabled={loading}>
-                {loading ? 'Entrando…' : 'Entrar'}
+              <button
+                type="button"
+                onClick={() => setMode('login')}
+                style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 20, background: 'none', border: 'none', fontSize: 13, color: '#949390', cursor: 'pointer', padding: 0, fontFamily: "'Outfit', sans-serif", transition: 'color 0.13s' }}
+                onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = '#0F0E0C'}
+                onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = '#949390'}
+              >
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Voltar para o login
               </button>
-            </form>
-
-            <p style={{ textAlign: 'center', marginTop: 22, fontSize: 13, color: '#949390', margin: '22px 0 0' }}>
-              Não tem conta?{' '}
-              <Link href="/cadastro" className="login-link">
-                Criar conta
-              </Link>
-            </p>
+            </>)}
           </div>
         </div>
 
