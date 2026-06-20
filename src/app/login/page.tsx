@@ -240,21 +240,10 @@ export default function LoginPage() {
                 </div>
 
                 {/* Senha */}
-                <div style={{ marginBottom: 26 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 400, color: '#1C3568' }}>
-                      Senha
-                    </label>
-                    <button
-                      type="button"
-                      onClick={openForgot}
-                      style={{ background: 'none', border: 'none', fontSize: 12, color: '#1C3568', cursor: 'pointer', padding: 0, fontFamily: "'Outfit', sans-serif", fontWeight: 500, transition: 'opacity 0.13s' }}
-                      onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = '0.65'}
-                      onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = '1'}
-                    >
-                      Esqueceu a senha?
-                    </button>
-                  </div>
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
+                    Senha
+                  </label>
                   <div style={{ position: 'relative' }}>
                     <input
                       className="login-input"
@@ -281,6 +270,18 @@ export default function LoginPage() {
                       )}
                     </button>
                   </div>
+                </div>
+
+                <div style={{ marginBottom: 22, textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    onClick={openForgot}
+                    style={{ background: 'none', border: 'none', fontSize: 12, color: '#1C3568', cursor: 'pointer', padding: 0, fontFamily: "'Outfit', sans-serif", fontWeight: 500, transition: 'opacity 0.13s' }}
+                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.opacity = '0.65'}
+                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = '1'}
+                  >
+                    Esqueceu a senha?
+                  </button>
                 </div>
 
                 {/* Erro */}
