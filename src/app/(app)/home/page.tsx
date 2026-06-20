@@ -1,26 +1,14 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { DashboardWeekCalendar } from '@/components/dashboard/DashboardWeekCalendar';
 import { EventDetailModal } from '@/components/calendar/EventDetailModal';
 import { useEvents, useRemoveEvent } from '@/hooks/useEvents';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { authService } from '@/services/authService';
-import { AuthUser } from '@/types';
-
-const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const DAYS_ABREV = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function weekStart(d: Date) {
-  const r = new Date(d); let dw = r.getDay(); dw = dw === 0 ? 6 : dw - 1; r.setDate(r.getDate() - dw); return r;
-}
-function weekEnd(d: Date) {
-  const r = weekStart(d); r.setDate(r.getDate() + 6); return r;
-}
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { MONTHS, DAYS_ABREV, fd, weekStart, weekEnd } from '@/lib/dateUtils';
+import { getInitials } from '@/lib/personUtils';
 
 export default function HomePage() {
   const router = useRouter();
@@ -34,11 +22,7 @@ export default function HomePage() {
   const [weekDate, setWeekDate] = useState(today);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedDayDs, setSelectedDayDs] = useState<string | null>(todayStr);
-  const [user, setUser] = useState<AuthUser | null>(null);
-
-  useEffect(() => {
-    authService.getCurrentUser().then(u => setUser(u));
-  }, []);
+  const { data: user } = useCurrentUser();
 
   const selectedEvent = selectedEventId ? events.find(e => e.id === selectedEventId) ?? null : null;
 
@@ -59,10 +43,6 @@ export default function HomePage() {
     .sort((a, b) => a.data.localeCompare(b.data) || (a.hora ?? '').localeCompare(b.hora ?? ''))
     .slice(0, 5);
 
-  const initials = user?.nome
-    ? user.nome.split(' ').filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase()
-    : user?.email?.[0]?.toUpperCase() ?? '?';
-
   if (isMobile) {
     return (
       <AppShell onAddEvent={() => router.push('/calendario')}>
@@ -75,7 +55,7 @@ export default function HomePage() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#fff', fontSize: 17, fontWeight: 700, flexShrink: 0,
             }}>
-              {initials}
+              {getInitials(user?.nome, user?.email)}
             </div>
             <div>
               <div style={{ fontSize: 15, fontWeight: 600, color: '#101828', lineHeight: 1.3 }}>

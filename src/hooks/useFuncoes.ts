@@ -4,7 +4,7 @@ import { funcoesService } from '@/services/funcoesService';
 const KEY = ['funcoes'];
 
 export function useFuncoes() {
-  return useQuery({ queryKey: KEY, queryFn: funcoesService.list });
+  return useQuery({ queryKey: KEY, queryFn: funcoesService.list, staleTime: Infinity });
 }
 
 export function useCreateFuncao() {

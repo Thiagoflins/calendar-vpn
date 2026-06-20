@@ -4,7 +4,7 @@ import { teamTypesService } from '@/services/teamTypesService';
 const KEY = ['teamTypes'];
 
 export function useTeamTypes() {
-  return useQuery({ queryKey: KEY, queryFn: teamTypesService.list });
+  return useQuery({ queryKey: KEY, queryFn: teamTypesService.list, staleTime: Infinity });
 }
 
 export function useCreateTeamType() {

@@ -1,19 +1,15 @@
 'use client';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useEvents } from '@/hooks/useEvents';
+import { MONTHS, fd } from '@/lib/dateUtils';
 
-const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAY_INITIALS = ['S','T','Q','Q','S','S','D'];
 
 const COR_MAP: Record<string, string> = {
   azul: '#2E5AAC', verde: '#1D9E75', rosa: '#E4608E',
   roxo: '#7F77DD', laranja: '#E87A2D', amarelo: '#BA7517',
 };
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 
 function fmtShort(ds: string) {
   const [, mo, d] = ds.split('-');
@@ -38,20 +34,25 @@ export function RightSidebar({ onAddEvent }: Props) {
   const { data: events = [] } = useEvents();
 
   const y = miniDate.getFullYear(), m = miniDate.getMonth();
-  const first = new Date(y, m, 1);
-  let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
-  const start = new Date(y, m, 1 - dow);
-  const miniCells = Array.from({ length: 35 }, (_, i) => {
-    const d = new Date(start); d.setDate(start.getDate() + i);
-    const ds = fd(d), inM = d.getMonth() === m, isT = ds === todayStr;
-    const hasEv = events.some(e => e.data === ds);
-    return { day: d.getDate(), ds, inM, isT, hasEv };
-  });
 
-  const upcoming = events
-    .filter(e => e.data >= todayStr)
-    .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora))
-    .slice(0, 4);
+  const miniCells = useMemo(() => {
+    const first = new Date(y, m, 1);
+    let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
+    const start = new Date(y, m, 1 - dow);
+    return Array.from({ length: 35 }, (_, i) => {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const ds = fd(d), inM = d.getMonth() === m, isT = ds === todayStr;
+      const hasEv = events.some(e => e.data === ds);
+      return { day: d.getDate(), ds, inM, isT, hasEv };
+    });
+  }, [y, m, todayStr, events]);
+
+  const upcoming = useMemo(() =>
+    events
+      .filter(e => e.data >= todayStr)
+      .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora))
+      .slice(0, 4),
+  [events, todayStr]);
 
   const QUICK = [
     {

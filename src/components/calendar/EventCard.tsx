@@ -1,10 +1,8 @@
 'use client';
+import { memo, useMemo } from 'react';
 import { CalendarEvent } from '@/types';
 import { getColor } from '@/lib/colors';
-
-function initials(name: string) {
-  return name.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-}
+import { getInitials } from '@/lib/personUtils';
 
 type Props = {
   event: CalendarEvent;
@@ -12,16 +10,17 @@ type Props = {
   compact?: boolean;
 };
 
-export function EventCard({ event, onClick, compact }: Props) {
+export const EventCard = memo(function EventCard({ event, onClick, compact }: Props) {
   const cl = getColor(event.cor);
 
-  const participants: string[] = [];
-  if (event.pastor) participants.push(event.pastor);
-  if (event.responsavel) participants.push(event.responsavel);
-  if (event.adoracao?.responsavel) participants.push(event.adoracao.responsavel);
-  if (event.organizacao?.responsavel) participants.push(event.organizacao.responsavel);
-  const visible = participants.slice(0, 3);
-  const extra = participants.length - visible.length;
+  const { visible, extra } = useMemo(() => {
+    const participants: string[] = [];
+    if (event.pastor) participants.push(event.pastor);
+    if (event.responsavel) participants.push(event.responsavel);
+    if (event.adoracao?.responsavel) participants.push(event.adoracao.responsavel);
+    if (event.organizacao?.responsavel) participants.push(event.organizacao.responsavel);
+    return { visible: participants.slice(0, 3), extra: Math.max(0, participants.length - 3) };
+  }, [event.pastor, event.responsavel, event.adoracao, event.organizacao]);
 
   if (compact) {
     // Mês: card compacto, só título + horário
@@ -119,7 +118,7 @@ export function EventCard({ event, onClick, compact }: Props) {
                 flexShrink: 0,
               }}
             >
-              {initials(name)}
+              {getInitials(name)}
             </span>
           ))}
           {extra > 0 && (
@@ -131,4 +130,4 @@ export function EventCard({ event, onClick, compact }: Props) {
       )}
     </div>
   );
-}
+});

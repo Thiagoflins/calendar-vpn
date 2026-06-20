@@ -6,7 +6,7 @@ import { CalendarEvent, EventType } from '@/types';
 const KEY = 'events';
 
 export function useEvents(params?: { from?: string; to?: string; type?: EventType }) {
-  return useQuery({ queryKey: [KEY, params], queryFn: () => eventsService.list(params) });
+  return useQuery({ queryKey: [KEY, params], queryFn: () => eventsService.list(params), staleTime: 1000 * 30 });
 }
 
 export function useEvent(id: string | null) {

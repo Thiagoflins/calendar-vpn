@@ -1,14 +1,9 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { getInitials } from '@/lib/personUtils';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { authService } from '@/services/authService';
-import { AuthUser } from '@/types';
-
-function initials(nome?: string, email?: string) {
-  if (nome) return nome.trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase();
-  return (email ?? '?')[0].toUpperCase();
-}
 
 const IconHome = () => (
   <svg width="17" height="17" fill="none" viewBox="0 0 24 24">
@@ -69,11 +64,7 @@ const NAV_GROUPS = [
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<AuthUser | null>(null);
-
-  useEffect(() => {
-    authService.getCurrentUser().then(setUser).catch(() => {});
-  }, []);
+  const { data: user } = useCurrentUser();
 
   const activePath = '/' + pathname.split('/')[1];
 
@@ -195,7 +186,7 @@ export function Sidebar() {
           onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'transparent'}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: '#1C3568', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
-            {initials(user?.nome, user?.email)}
+            {getInitials(user?.nome, user?.email)}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 500, color: '#101828', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

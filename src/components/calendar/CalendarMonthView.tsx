@@ -1,13 +1,11 @@
 'use client';
+import { useMemo } from 'react';
 import { CalendarEvent } from '@/types';
 import { EventCard } from './EventCard';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { fd } from '@/lib/dateUtils';
 
 const DAYS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 
 type Props = {
   date: Date;
@@ -23,18 +21,20 @@ export function CalendarMonthView({ date, events, onDayClick, onEventClick, sele
   const compact = forceCompact || isMobile;
 
   const today = fd(new Date());
-  const y = date.getFullYear(), m = date.getMonth();
-  const first = new Date(y, m, 1);
-  let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
-  const start = new Date(y, m, 1 - dow);
 
-  const cells = Array.from({ length: 42 }, (_, i) => {
-    const d = new Date(start); d.setDate(start.getDate() + i);
-    const ds = fd(d), inMo = d.getMonth() === m;
-    const dayEvs = inMo ? events.filter(e => e.data === ds) : [];
-    const isSel = selectedDay ? ds === selectedDay : ds === today;
-    return { ds, day: d.getDate(), inMo, isToday: ds === today, isSel, dayEvs, i };
-  });
+  const cells = useMemo(() => {
+    const y = date.getFullYear(), m = date.getMonth();
+    const first = new Date(y, m, 1);
+    let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
+    const start = new Date(y, m, 1 - dow);
+    return Array.from({ length: 42 }, (_, i) => {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const ds = fd(d), inMo = d.getMonth() === m;
+      const dayEvs = inMo ? events.filter(e => e.data === ds) : [];
+      const isSel = selectedDay ? ds === selectedDay : ds === today;
+      return { ds, day: d.getDate(), inMo, isToday: ds === today, isSel, dayEvs, i };
+    });
+  }, [date, events, selectedDay, today]);
 
   const cellMinH = compact ? 46 : 110;
   const maxEventsShown = compact ? 0 : 3;

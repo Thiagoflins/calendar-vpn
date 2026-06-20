@@ -1,18 +1,12 @@
 'use client';
+import { useMemo } from 'react';
 import { CalendarEvent } from '@/types';
 import { getColor } from '@/lib/colors';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { fd, weekStart } from '@/lib/dateUtils';
 
 const DAYS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 const ABS_START = 7, ABS_END = 22;
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function weekStart(d: Date) {
-  const r = new Date(d); let dw = r.getDay(); dw = dw === 0 ? 6 : dw - 1; r.setDate(r.getDate() - dw); return r;
-}
 
 type Props = {
   date: Date;
@@ -24,20 +18,27 @@ export function CalendarWeekView({ date, events, onEventClick }: Props) {
   const isMobile = useIsMobile();
   const H = isMobile ? 48 : 60;
   const today = fd(new Date());
-  const ws = weekStart(date);
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(ws); d.setDate(ws.getDate() + i);
-    const ds = fd(d);
-    return { ds, name: DAYS[i], num: d.getDate(), isToday: ds === today, evs: events.filter(e => e.data === ds) };
-  });
 
-  const weekEvs = days.flatMap(d => d.evs);
-  const eventHours = weekEvs.map(e => parseInt(e.hora?.split(':')[0] ?? '12'));
-  const START = eventHours.length > 0 ? Math.max(ABS_START, Math.min(...eventHours) - 1) : ABS_START;
-  const END = eventHours.length > 0 ? Math.min(ABS_END, Math.max(...eventHours) + 2) : ABS_END;
-
-  const slots = Array.from({ length: END - START + 1 }, (_, i) => START + i);
-  const evTop = (hora: string) => { const [h, m] = hora.split(':').map(Number); return (h - START) * H + m; };
+  const { days, slots, START, END, evTop } = useMemo(() => {
+    const ws = weekStart(date);
+    const builtDays = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(ws); d.setDate(ws.getDate() + i);
+      const ds = fd(d);
+      return { ds, name: DAYS[i], num: d.getDate(), isToday: ds === today, evs: events.filter(e => e.data === ds) };
+    });
+    const weekEvs = builtDays.flatMap(d => d.evs);
+    const eventHours = weekEvs.map(e => parseInt(e.hora?.split(':')[0] ?? '12'));
+    const calcStart = eventHours.length > 0 ? Math.max(ABS_START, Math.min(...eventHours) - 1) : ABS_START;
+    const calcEnd = eventHours.length > 0 ? Math.min(ABS_END, Math.max(...eventHours) + 2) : ABS_END;
+    const builtSlots = Array.from({ length: calcEnd - calcStart + 1 }, (_, i) => calcStart + i);
+    return {
+      days: builtDays,
+      slots: builtSlots,
+      START: calcStart,
+      END: calcEnd,
+      evTop: (hora: string) => { const [h, m] = hora.split(':').map(Number); return (h - calcStart) * H + m; },
+    };
+  }, [date, events, today]);
 
   const now = new Date();
   const nowTop = (now.getHours() - START) * H + (now.getMinutes() / 60) * H;

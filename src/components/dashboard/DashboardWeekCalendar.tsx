@@ -1,23 +1,12 @@
 'use client';
 import { CalendarEvent } from '@/types';
 import { getColor } from '@/lib/colors';
+import { fd, weekStart } from '@/lib/dateUtils';
 
 const DAYS_ABBR = ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'];
 const H = 52;
 const START = 7;
 const END = 22;
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function weekStart(d: Date) {
-  const r = new Date(d);
-  let dw = r.getDay();
-  dw = dw === 0 ? 6 : dw - 1;
-  r.setDate(r.getDate() - dw);
-  return r;
-}
 
 function evTop(hora: string) {
   const [h, m] = hora.split(':').map(Number);

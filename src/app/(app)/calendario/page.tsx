@@ -13,17 +13,13 @@ import { useEvents, useCreateEvent, useCreateManyEvents, useUpdateEvent, useRemo
 import { useExportCalendar } from '@/hooks/useExportCalendar';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { CalendarEvent, EventType } from '@/types';
+import { MONTHS, fd } from '@/lib/dateUtils';
 
-const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const COR_MAP: Record<string, string> = {
   azul: '#2E5AAC', verde: '#1D9E75', rosa: '#E4608E',
   roxo: '#7F77DD', laranja: '#E87A2D', amarelo: '#BA7517',
 };
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 
 function CalendarioContent() {
   const router = useRouter();

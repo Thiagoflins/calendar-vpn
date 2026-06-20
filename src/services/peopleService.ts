@@ -2,14 +2,14 @@ import { Person } from '@/types';
 import { createClient } from '@/lib/supabase/client';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toP(row: any, teamIds: string[]): Person {
+function toP(row: any, teamIds?: string[]): Person {
   return {
     id: row.id,
     nome: row.nome,
     email: row.email ?? undefined,
     telefone: row.telefone ?? undefined,
     funcoes: row.funcoes ?? [],
-    equipeIds: teamIds,
+    equipeIds: teamIds ?? (row.team_members ?? []).map((m: { team_id: string }) => m.team_id),
     ativo: row.ativo,
     observacao: row.observacao ?? undefined,
     criadoEm: row.criado_em ?? undefined,
@@ -19,19 +19,11 @@ function toP(row: any, teamIds: string[]): Person {
 export const peopleService = {
   async list(params?: { ativo?: boolean }): Promise<Person[]> {
     const supabase = createClient();
-    let q = supabase.from('people').select('*').order('nome');
+    let q = supabase.from('people').select('*, team_members(team_id)').order('nome');
     if (params?.ativo !== undefined) q = q.eq('ativo', params.ativo);
     const { data, error } = await q;
     if (error) throw new Error(error.message);
-
-    const { data: members } = await supabase.from('team_members').select('team_id, person_id');
-
-    return (data ?? []).map(row => {
-      const teamIds = (members ?? [])
-        .filter((m: { person_id: string }) => m.person_id === row.id)
-        .map((m: { team_id: string }) => m.team_id);
-      return toP(row, teamIds);
-    });
+    return (data ?? []).map(row => toP(row));
   },
 
   async getById(id: string): Promise<Person | null> {

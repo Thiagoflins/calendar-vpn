@@ -1,12 +1,7 @@
 'use client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useIsMobile } from '@/hooks/useIsMobile';
-
-const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-function fd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
+import { MONTHS, fd, weekStart } from '@/lib/dateUtils';
 
 type HeaderProps = {
   onAddEvent?: () => void;
@@ -24,10 +19,6 @@ export function Header({ onAddEvent }: HeaderProps) {
   const viewParam = params.get('view') ?? 'mes';
   const dateParam = params.get('date');
   const currentDate = dateParam ? new Date(dateParam + 'T12:00:00') : new Date();
-
-  function weekStart(d: Date) {
-    const r = new Date(d); let dw = r.getDay(); dw = dw === 0 ? 6 : dw - 1; r.setDate(r.getDate() - dw); return r;
-  }
 
   const periodLabel = () => {
     const y = currentDate.getFullYear(), m = currentDate.getMonth();

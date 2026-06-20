@@ -6,7 +6,7 @@ import { Person } from '@/types';
 const KEY = 'people';
 
 export function usePeople(params?: { ativo?: boolean }) {
-  return useQuery({ queryKey: [KEY, params], queryFn: () => peopleService.list(params) });
+  return useQuery({ queryKey: [KEY, params], queryFn: () => peopleService.list(params), staleTime: 1000 * 60 * 5 });
 }
 
 export function useCreatePerson() {

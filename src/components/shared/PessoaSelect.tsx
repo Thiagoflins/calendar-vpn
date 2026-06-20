@@ -1,10 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { Person } from '@/types';
-
-function initials(nome: string) {
-  return nome.trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase();
-}
+import { getInitials } from '@/lib/personUtils';
 
 type Props = {
   value: string;
@@ -77,7 +74,7 @@ export function PessoaSelect({ value, onChange, people, mode = 'nome', placehold
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         {selected && !open && (
           <div style={{ position: 'absolute', left: 10, width: 26, height: 26, borderRadius: '50%', background: '#2E5AAC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: '#fff', pointerEvents: 'none', zIndex: 1 }}>
-            {initials(selected.nome)}
+            {getInitials(selected.nome)}
           </div>
         )}
         <input
@@ -124,7 +121,7 @@ export function PessoaSelect({ value, onChange, people, mode = 'nome', placehold
                   }}
                 >
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: isSel ? '#2E5AAC' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: isSel ? '#fff' : '#6B7280', flexShrink: 0 }}>
-                    {initials(p.nome)}
+                    {getInitials(p.nome)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: isSel ? 600 : 400, color: '#101828' }}>{p.nome}</div>
