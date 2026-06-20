@@ -240,7 +240,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Senha */}
-                <div style={{ marginBottom: 10 }}>
+                <div style={{ marginBottom: 5 }}>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 400, color: '#1C3568', marginBottom: 6 }}>
                     Senha
                   </label>
