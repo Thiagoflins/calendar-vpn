@@ -76,6 +76,7 @@ export default function ContaPage() {
   const [profileLoading, setProfileLoading] = useState(false);
 
   const [editingPass, setEditingPass] = useState(false);
+  const [currentPass, setCurrentPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [passMsg, setPassMsg] = useState('');
@@ -108,16 +109,19 @@ export default function ContaPage() {
   async function savePassword(e: React.FormEvent) {
     e.preventDefault();
     setPassMsg(''); setPassErr('');
+    if (!currentPass) { setPassErr('Informe a senha atual.'); return; }
     if (newPass !== confirmPass) { setPassErr('As senhas não coincidem.'); return; }
     if (newPass.length < 6) { setPassErr('Mínimo 6 caracteres.'); return; }
     setPassLoading(true);
     try {
+      await authService.signIn(user!.email, currentPass);
       await authService.updatePassword(newPass);
       setPassMsg('Senha alterada com sucesso.');
-      setNewPass(''); setConfirmPass('');
+      setCurrentPass(''); setNewPass(''); setConfirmPass('');
       setEditingPass(false);
     } catch (err) {
-      setPassErr(err instanceof Error ? err.message : 'Erro ao alterar senha.');
+      const msg = err instanceof Error ? err.message : '';
+      setPassErr(msg.toLowerCase().includes('invalid') ? 'Senha atual incorreta.' : (msg || 'Erro ao alterar senha.'));
     } finally {
       setPassLoading(false);
     }
@@ -205,7 +209,7 @@ export default function ContaPage() {
             title="Segurança"
             action={
               <button
-                onClick={() => { setEditingPass(p => !p); setPassMsg(''); setPassErr(''); setNewPass(''); setConfirmPass(''); }}
+                onClick={() => { setEditingPass(p => !p); setPassMsg(''); setPassErr(''); setCurrentPass(''); setNewPass(''); setConfirmPass(''); }}
                 style={{ fontSize: 12, fontWeight: 500, color: '#2E5AAC', background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: 5, transition: 'background 0.13s, color 0.13s' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#F0F4FF'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
@@ -221,6 +225,7 @@ export default function ContaPage() {
               </div>
             ) : (
               <form onSubmit={savePassword}>
+                <InputField label="Senha atual" value={currentPass} onChange={setCurrentPass} type="password" placeholder="Digite sua senha atual" />
                 <InputField label="Nova senha" value={newPass} onChange={setNewPass} type="password" placeholder="Mínimo 6 caracteres" />
                 <InputField label="Confirmar nova senha" value={confirmPass} onChange={setConfirmPass} type="password" placeholder="Repita a nova senha" />
                 {passErr && <div style={{ fontSize: 12, color: '#EF4444', marginBottom: 10 }}>{passErr}</div>}

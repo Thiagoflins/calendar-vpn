@@ -5,6 +5,7 @@ import { PersonFormDialog } from '@/components/people/PersonFormDialog';
 import { IndisponibilidadeDialog } from '@/components/people/IndisponibilidadeDialog';
 import { usePeople, useCreatePerson, useUpdatePerson, useDeactivatePerson } from '@/hooks/usePeople';
 import { useFuncoes } from '@/hooks/useFuncoes';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Person } from '@/types';
 
 const PAGE_SIZE = 10;
@@ -151,6 +152,9 @@ const CSS = `
 `;
 
 export default function PessoasPage() {
+  const { data: currentUser } = useCurrentUser();
+  const canEdit = currentUser?.role === 'admin' || currentUser?.role === 'lider';
+
   const { data: people = [] } = usePeople();
   const { data: funcoesList = [] } = useFuncoes();
   const funcaoNomes = funcoesList.map(f => f.nome);
@@ -332,14 +336,16 @@ export default function PessoasPage() {
             ))}
           </div>
 
-          <button
-            onClick={() => { setEditPerson(null); setShowForm(true); }}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
-          >
-            <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> Membro
-          </button>
+          {canEdit && (
+            <button
+              onClick={() => { setEditPerson(null); setShowForm(true); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+            >
+              <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> Membro
+            </button>
+          )}
         </div>
 
         {/* ── Table ── */}
@@ -477,27 +483,31 @@ export default function PessoasPage() {
 
                 {/* Ações */}
                 <div style={{ display: 'flex', gap: 2, alignItems: 'center', justifyContent: 'flex-end' }}>
-                  <button className="vpn-act vpn-act-edit" onClick={() => openEdit(p)} title="Editar">
-                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
-                      <path d="M11 4H4C3.448 4 3 4.448 3 5V20C3 20.552 3.448 21 4 21H19C19.552 21 20 20.552 20 20V13M18.586 2.586C19.367 1.805 20.633 1.805 21.414 2.586C22.195 3.367 22.195 4.633 21.414 5.414L12 14.828L8 16L9.172 12L18.586 2.586Z"
-                        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                  <button className="vpn-act" onClick={() => setIndispPerson(p)} title="Indisponibilidade" style={{ color: '#9AA3B5' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FFFBEB'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#9AA3B5'; }}
-                  >
-                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
-                      <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4ZM12 11V13M12 16H12.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                  {p.ativo && (
-                    <button className="vpn-act vpn-act-deact" onClick={() => handleDeactivate(p)} title="Desativar membro">
-                      <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
-                        <path d="M6.34 6.34L17.66 17.66" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                      </svg>
-                    </button>
+                  {canEdit && (
+                    <>
+                      <button className="vpn-act vpn-act-edit" onClick={() => openEdit(p)} title="Editar">
+                        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                          <path d="M11 4H4C3.448 4 3 4.448 3 5V20C3 20.552 3.448 21 4 21H19C19.552 21 20 20.552 20 20V13M18.586 2.586C19.367 1.805 20.633 1.805 21.414 2.586C22.195 3.367 22.195 4.633 21.414 5.414L12 14.828L8 16L9.172 12L18.586 2.586Z"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      <button className="vpn-act" onClick={() => setIndispPerson(p)} title="Indisponibilidade" style={{ color: '#9AA3B5' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FFFBEB'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#9AA3B5'; }}
+                      >
+                        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                          <path d="M8 2V5M16 2V5M3 8H21M5 4H19C20.105 4 21 4.895 21 6V19C21 20.105 20.105 21 19 21H5C3.895 21 3 20.105 3 19V6C3 4.895 3.895 4 5 4ZM12 11V13M12 16H12.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      {p.ativo && (
+                        <button className="vpn-act vpn-act-deact" onClick={() => handleDeactivate(p)} title="Desativar membro">
+                          <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
+                            <path d="M6.34 6.34L17.66 17.66" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

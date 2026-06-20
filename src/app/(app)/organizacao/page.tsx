@@ -8,6 +8,7 @@ import { useTeams, useCreateTeam, useUpdateTeam, useRemoveTeam } from '@/hooks/u
 import { usePeople } from '@/hooks/usePeople';
 import { useFuncoes, useCreateFuncao, useUpdateFuncao, useRemoveFuncao } from '@/hooks/useFuncoes';
 import { useTeamTypes, useCreateTeamType, useUpdateTeamType, useRemoveTeamType } from '@/hooks/useTeamTypes';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Team } from '@/types';
 import { getColor, COLORS } from '@/lib/colors';
 
@@ -119,6 +120,9 @@ function EmptyState({ icon, label }: { icon: React.ReactNode; label: string }) {
 }
 
 export default function OrganizacaoPage() {
+  const { data: currentUser } = useCurrentUser();
+  const canEdit = currentUser?.role === 'admin' || currentUser?.role === 'lider';
+
   const { data: teams = [] } = useTeams();
   const { data: people = [] } = usePeople();
   const { data: funcoes = [] } = useFuncoes();
@@ -247,12 +251,14 @@ export default function OrganizacaoPage() {
                 />
               </div>
             )}
-            <button onClick={addAction} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
-              onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
-              onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
-            >
-              <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> {addLabel}
-            </button>
+            {canEdit && (
+              <button onClick={addAction} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 8, border: 'none', background: '#2E5AAC', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', flexShrink: 0, height: 36, transition: 'background 0.13s, transform 0.12s, box-shadow 0.13s' }}
+                onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#23478A'; el.style.transform = 'translateY(-1px)'; el.style.boxShadow = '0 4px 14px rgba(46,90,172,0.32)'; }}
+                onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.background = '#2E5AAC'; el.style.transform = 'translateY(0)'; el.style.boxShadow = 'none'; }}
+              >
+                <span style={{ fontSize: 17, lineHeight: 1 }}>+</span> {addLabel}
+              </button>
+            )}
           </div>
         </div>
 
@@ -305,8 +311,12 @@ export default function OrganizacaoPage() {
                     {COLORS.map(cor => { const c = getColor(cor); return <div key={cor} style={{ width: 10, height: 10, borderRadius: '50%', background: c.dot, opacity: team.cor === cor ? 1 : 0.18 }} />; })}
                   </div>
                   <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                    <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditTeam(team); setShowTeamForm(true); }}><EditIcon /></button>
-                    <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteTeam(team.id)}><TrashIcon /></button>
+                    {canEdit && (
+                      <>
+                        <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditTeam(team); setShowTeamForm(true); }}><EditIcon /></button>
+                        <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteTeam(team.id)}><TrashIcon /></button>
+                      </>
+                    )}
                   </div>
                 </div>
               );
@@ -345,8 +355,12 @@ export default function OrganizacaoPage() {
                     </>) : <span style={{ fontSize: 13, color: '#C4C9D4' }}>—</span>}
                   </div>
                   <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                    <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditFuncao(fn); setShowFuncaoForm(true); }}><EditIcon /></button>
-                    <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteFuncao(fn.id)}><TrashIcon /></button>
+                    {canEdit && (
+                      <>
+                        <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditFuncao(fn); setShowFuncaoForm(true); }}><EditIcon /></button>
+                        <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteFuncao(fn.id)}><TrashIcon /></button>
+                      </>
+                    )}
                   </div>
                 </div>
               );
@@ -380,8 +394,12 @@ export default function OrganizacaoPage() {
                     {equipeCount > 0 ? `${equipeCount} equipe${equipeCount !== 1 ? 's' : ''}` : '—'}
                   </div>
                   <div style={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                    <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditTeamType(tt); setShowTeamTypeForm(true); }}><EditIcon /></button>
-                    <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteTeamType(tt.id)}><TrashIcon /></button>
+                    {canEdit && (
+                      <>
+                        <button className="org-act org-act-edit" title="Editar" onClick={() => { setEditTeamType(tt); setShowTeamTypeForm(true); }}><EditIcon /></button>
+                        <button className="org-act org-act-deact" title="Excluir" onClick={() => handleDeleteTeamType(tt.id)}><TrashIcon /></button>
+                      </>
+                    )}
                   </div>
                 </div>
               );

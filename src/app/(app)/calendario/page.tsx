@@ -109,6 +109,7 @@ function CalendarioContent() {
   };
 
   const handleDelete = async (id: string) => {
+    if (!confirm('Excluir este evento?')) return;
     await removeEvent.mutateAsync(id);
     setDetailId(null);
     setShowForm(false);

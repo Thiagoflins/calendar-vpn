@@ -197,7 +197,7 @@ export default function HomePage() {
             event={selectedEvent}
             onClose={() => setSelectedEventId(null)}
             onEdit={() => { setSelectedEventId(null); router.push('/calendario'); }}
-            onDelete={async () => { if (selectedEvent) await deleteEvent.mutateAsync(selectedEvent.id); setSelectedEventId(null); }}
+            onDelete={async () => { if (!confirm('Excluir este evento?')) return; if (selectedEvent) await deleteEvent.mutateAsync(selectedEvent.id); setSelectedEventId(null); }}
           />
         )}
       </AppShell>
@@ -244,7 +244,7 @@ export default function HomePage() {
           event={selectedEvent}
           onClose={() => setSelectedEventId(null)}
           onEdit={() => { setSelectedEventId(null); router.push('/calendario'); }}
-          onDelete={async () => { if (selectedEvent) await deleteEvent.mutateAsync(selectedEvent.id); setSelectedEventId(null); }}
+          onDelete={async () => { if (!confirm('Excluir este evento?')) return; if (selectedEvent) await deleteEvent.mutateAsync(selectedEvent.id); setSelectedEventId(null); }}
         />
       )}
     </AppShell>
